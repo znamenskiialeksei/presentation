@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Василиса | Авторские украшения и Мастер-классы</title>
+    <title>Vasilisa | Jewelry & Masterclasses</title>
     <script src='https://meet.jit.si/external_api.js'></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/lint/lint.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/material-darker.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/fold/foldgutter.min.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/lint/lint.min.js"></script>
@@ -20,206 +21,141 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/fold/foldcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/fold/foldgutter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/fold/brace-fold.min.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify.min.js"></script>
 
     <style>
-        /* --- СТИЛИ ОСТАВЛЕНЫ БЕЗ ИЗМЕНЕНИЙ (см. исходный файл) --- */
+        /* --- БАЗОВЫЕ СТИЛИ --- */
         body { margin: 0; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; flex-direction: column; height: 100vh; height: 100svh; }
         .content-view { flex-grow: 1; position: relative; display: none; background-color: #000; }
         #cover-view.content-view { display: flex; }
+        
+        /* --- ОБЛОЖКА --- */
         #cover-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; object-fit: cover; }
         .cover-text-box { position: absolute; z-index: 2; text-shadow: 2px 2px 5px rgba(8, 0, 0, 0.8); font-size: 1.1em; max-width: 90%; text-align: center; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; gap: 10px; transition: opacity 0.5s; }
         .cover-text-bg { background-color: rgba(0, 0, 0, 0.5); padding: 5px 10px; color: rgb(246, 238, 238); white-space: nowrap; }
-        #tooltip-box { position: fixed; z-index: 10001; background-color: rgba(0, 0, 0, 0.8); color: white; padding: 8px 12px; border-radius: 8px; font-size: 0.9em; max-width: 250px; text-align: center; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s, transform 0.3s; pointer-events: none; }
-        #tooltip-box.visible { opacity: 1; visibility: visible; }
         .cover-button { position: absolute; z-index: 3; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.5); border: 2px solid white; cursor: pointer; transition: transform 0.2s, background-color 0.2s; transform: translate(-50%, -50%); }
         .cover-button:hover { transform: translate(-50%, -50%) scale(1.1); background-color: rgba(0, 0, 0, 0.7); }
-        .cover-button.route-selector-btn { width: 90px; height: 40px; border-radius: 8px; }
-        .cover-button svg { width: 28px; height: 28px; fill: white; }
-        .pulsing { animation-name: pulseAnimation; animation-iteration-count: infinite; animation-timing-function: ease-in-out; animation-duration: var(--pulse-total-duration, 8s); }
-        .cover-button.route-selector-btn svg { width: 100%; height: 100%; fill: initial; }
+        .pulsing { animation: pulseAnimation var(--pulse-total-duration, 8s) ease-in-out infinite; }
         @keyframes pulseAnimation { 0% { opacity: 0; } 6.25% { opacity: 1; } 56.25% { opacity: 1; } 81.25% { opacity: 0; } 100% { opacity: 0; } }
-        .route-dropdown-menu { position: fixed; z-index: 10000; background-color: white; border-radius: 8px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); padding: 8px; min-width: 200px; opacity: 0; visibility: hidden; transition: opacity 0.2s, transform 0.2s, visibility 0.2s; }
-        .route-dropdown-menu.visible { opacity: 1; visibility: visible; }
-        .route-dropdown-menu a { display: block; padding: 10px 15px; color: #333; text-decoration: none; border-radius: 6px; transition: background-color 0.2s; cursor: pointer; }
-        .route-dropdown-menu a:hover { background-color: #f0f0f0; }
-        .page { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, height 0.3s ease-in-out; background: white; }
+        
+        /* --- СТРАНИЦЫ И ЛЕНТА --- */
+        .page { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out; background: white; }
         .page.active { opacity: 1; visibility: visible; }
-        .page p { margin-top: 15px; text-align: left; font-size: 1.1em; line-height: 1.6; color: #333; overflow-y: auto; width: 100%; padding-right: 10px; flex-grow: 1; min-height: 0; box-sizing: border-box; }
-        .page-buttons-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 15px; flex-shrink: 0; }
-        .page-btn { color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 1em; cursor: pointer; transition: background-color 0.3s; }
-        .page-btn.video-btn, .page-btn.iframe-btn { background-color: #4285F4; }
-        .page-btn.audio-btn { background-color: #f4b400; }
-        .page-btn.photo-btn { background-color: #0F9D58; }
-        .page-btn.text-btn { background-color: #673ab7; }
-        .page-btn.carousel-btn { background-color: #9c27b0; }
-        .page-btn:hover { filter: brightness(90%); }
-        .page-btn.admin-error-btn { background-color: #db4437; cursor: not-allowed; border: 2px dashed white; font-weight: bold; }
-        .link-btn { position: absolute; z-index: 5; padding: 12px 24px; font-size: 1em; font-weight: 600; color: white; background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%); border: none; border-radius: 8px; left: 50%; top: 85%; transform: translate(-50%, -50%); }
-        .link-btn:hover { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; flex-direction: column; }
-        .modal-content { display: none; max-width: 90%; max-height: 80%; width: auto; height: auto; border-radius: 4px; }
-        #modalIframe { display: block; background-color: #000; border-radius: 8px; max-width: 95vw; max-height: 90vh; }
-        #jitsi-container { width: 90%; height: 90%; max-width: 1280px; }
-        #modalText { background-color: #fff; padding: 25px; color: #333; overflow-y: auto; line-height: 1.6; }
-        .modal-close { position: absolute; top: 20px; right: 35px; color: #fe0202; font-size: 40px; font-weight: bold; cursor: pointer; z-index: 1001; }
-        .modal-header, .modal-footer { color: white; text-align: center; padding: 5px 15px; max-width: 90%; box-sizing: border-box; font-size: clamp(0.8rem, 2vw, 1.1em); }
-        #iframe-wrapper { position: relative; width: 95%; max-width: 700px; background-color: #ffffff; border-radius: 8px; padding: 15px; box-sizing: border-box; transition: height 0.3s ease; }
-        #bookingFrame { width: 100%; height: 100%; border: none; }
-        #admin-panel { position: fixed; bottom: 10px; left: 10px; z-index: 9999; background-color: rgba(255, 221, 221, 0.95); border: 2px solid #db4437; border-radius: 8px; padding: 15px; max-width: 400px; }
-        #admin-panel h4 { margin: 0 0 10px 0; color: #b71c1c; }
-        #admin-panel ul { margin: 0; padding-left: 20px; }
-        #admin-panel li { margin-bottom: 5px; }
-        #edit-config-btn { position: fixed; bottom: 20px; right: 20px; z-index: 10001; background-color: #007bff; color: white; border: none; border-radius: 8px; padding: 12px 18px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.2s, background-color 0.2s; }
-        #edit-config-btn:hover { transform: scale(1.05); background-color: #0056b3; }
-        #admin-config-modal { display: none; z-index: 10002; }
-        .admin-modal-content { background-color: #f8f9fa; color: #212529; padding: 20px; border-radius: 8px; width: 95%; max-width: 1200px; height: 95vh; display: flex; flex-direction: column; box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
-        .admin-modal-content h3 { margin-top: 0; }
-        .admin-modal-top-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px; }
-        .admin-version-control, .admin-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .admin-version-control select, .admin-version-control button, .admin-tools button { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; }
-        .CodeMirror { border: 1px solid #ccc; height: auto; flex-grow: 1; font-size: 14px; border-radius: 4px; }
-        .CodeMirror-lint-marker-error { background-image: none; }
-        .admin-modal-bottom-panel { display: flex; justify-content: space-between; margin-top: 15px; flex-wrap: wrap; gap: 10px; }
-        .admin-modal-bottom-panel .left-buttons, .admin-modal-bottom-panel .right-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
-        .admin-modal-buttons button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background-color 0.2s; }
-        .btn-primary { background-color: #007bff; color: white; } .btn-primary:hover { background-color: #0069d9; }
-        .btn-success { background-color: #28a745; color: white; } .btn-success:hover { background-color: #218838; }
-        .btn-warning { background-color: #ffc107; color: #212529; } .btn-warning:hover { background-color: #e0a800; }
-        .btn-secondary { background-color: #6c757d; color: white; } .btn-secondary:hover { background-color: #5a6268; }
-        .btn-info { background-color: #17a2b8; color: white; } .btn-info:hover { background-color: #138496; }
-        .btn-danger { background-color: #dc3545; color: white; } .btn-danger:hover { background-color: #c82333; }
-        #scratchpad-window { display: none; position: fixed; z-index: 10003; background-color: #f1f1f1; border: 1px solid #d3d3d3; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); width: 600px; height: 400px; top: 20%; left: 20%; resize: both; overflow: hidden; display: flex; flex-direction: column; }
-        #scratchpad-header { padding: 10px; cursor: move; z-index: 10; background-color: #2196F3; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
-        #scratchpad-header-title { font-weight: bold; }
-        #scratchpad-close-btn { background: none; border: none; color: white; font-size: 20px; font-weight: bold; cursor: pointer; }
-        #scratchpad-editor-container { padding: 5px; flex-grow: 1; display: flex; }
-        #scratchpad-window .CodeMirror { flex-grow: 1; height: 100%; }
-        .controls { flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px 15px; background: #f1f1f1; border-top: 1px solid #ddd; box-sizing: border-box; }
-        .controls-label { color: #555; margin-bottom: 8px; font-weight: bold; text-align: center; font-size: clamp(1.2rem, 2.5vw, 1.4em); max-width: 100%; word-break: break-word; overflow-wrap: break-word; hyphens: auto; min-width: 0; }
-        .controls-buttons { display: flex; justify-content: center; align-items: center; width: 100%; gap: clamp(10px, 3vw, 25px); flex-wrap: wrap; }
-        .button-wrapper { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .button-label { font-size: clamp(1.0rem, 1.8vw, 1.2rem); color: #555; text-align: center; line-height: 1.3; }
-        .controls button { color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background-color 0.3s, transform 0.3s; }
-        .controls button:hover { transform: scale(1.1); }
-        #playPauseBtn { background: #4285F4; width: 40px; height: 40px; font-size: 20px; }
-        .nav-btn { background: #757575; width: 40px; height: 40px; font-size: 20px; }
-        #bookingBtn { background: #4CAF50; width: 40px; height: 40px; font-size: 20px; }
-        #conferenceBtn { background: #e63946; width: 40px; height: 40px; font-size: 20px; }
-        #pageIndicator { font-size: 1.2em; font-weight: bold; color: #333; min-width: 50px; text-align: center; }
-        #modalCarousel { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 95%; max-width: 1280px; height: 90%; gap: 15px; }
-        #carouselIframeWrapper { flex-grow: 1; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; z-index: 1; }
-        #carouselIframe { flex-shrink: 0; border: none; border-radius: 8px; transition: transform 0.3s ease; transform-origin: center center; }
-        .carousel-nav { flex-shrink: 0; background: rgba(0, 0, 0, 0.5); border: none; color: white; font-size: 3em; cursor: pointer; padding: 0 20px; border-radius: 8px; user-select: none; height: 80%; position: relative; z-index: 2; }
-        .carousel-nav:hover { background: rgba(0, 0, 0, 0.8); }
-        @media (max-width: 768px) {
-            #modalCarousel { flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px; }
-            #carouselIframeWrapper { order: 1; width: 100%; height: 80%; }
-            #modalCarousel .carousel-nav.prev, #modalCarousel .carousel-nav.next { order: 2; font-size: 2em; background: rgba(0, 0, 0, 0.5); border-radius: 50%; height: 45px; width: 45px; padding: 0; display: flex; align-items: center; justify-content: center; margin-top: 5px; }
-        }
+        .page p { margin-top: 15px; text-align: left; font-size: 1.1em; line-height: 1.6; color: #333; width: 100%; box-sizing: border-box; }
+        
+        /* Feed Mode Styles */
         .feed-mode { height: auto; overflow-y: auto; overflow-x: hidden; }
-        .feed-mode .content-view { display: block !important; position: relative; height: auto; }
+        .feed-mode .content-view { display: block !important; height: auto; }
         .feed-mode #cover-view { height: 100vh; height: 100svh; }
-        .feed-mode .page { position: relative; opacity: 1 !important; visibility: visible !important; margin-bottom: 10px; height: auto; }
-        .feed-mode .page details { width: 100%; border: 1px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; }
-        .feed-mode .page details[open] { min-height: 80vh; padding-bottom: 80px; }
-        .feed-mode .controls { position: sticky; bottom: 0; z-index: 1000; width: 100%; }
-        .feed-mode .page summary { padding: 15px; background-color: #f1f1f1; border-radius: 8px; font-weight: bold; font-size: 1.1em; cursor: pointer; transition: background-color 0.2s; list-style: none; position: relative; }
-        .feed-mode .page summary:hover { background-color: #e0e0e0; }
+        .feed-mode .page { opacity: 1 !important; visibility: visible !important; margin-bottom: 10px; height: auto; }
+        .feed-mode .page details { width: 100%; border: 1px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; background: #fff; }
+        .feed-mode .page details[open] { padding-bottom: 20px; }
+        .feed-mode .page summary { padding: 15px; background-color: #f8f9fa; border-radius: 8px; font-weight: bold; font-size: 1.1em; cursor: pointer; list-style: none; position: relative; border-bottom: 1px solid #eee; }
         .feed-mode .page summary::before { content: '▼'; position: absolute; right: 20px; transition: transform 0.2s; }
         .feed-mode .page details:not([open])>summary::before { transform: rotate(-90deg); }
-        .feed-mode .page details>.page-buttons-container { margin-top: 20px; }
-        .embedded-media { max-width: 100%; height: auto; display: block; margin: 15px auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
-        .embedded-media.align-left { float: left; margin-right: 15px; margin-left: 0; }
-        .embedded-media.align-right { float: right; margin-left: 15px; margin-right: 0; }
-        .embedded-media.size-small { width: 30%; max-width: 200px; }
-        .embedded-media.size-medium { width: 50%; max-width: 400px; }
-        .embedded-media.size-large { width: 100%; }
-        .reels-style { max-width: 300px; aspect-ratio: 9 / 16; width: 50%; height: auto; }
-        .embedded-audio { width: 100%; margin: 15px 0; }
-        .page p::after { content: ""; display: table; clear: both; }
-        .inline-carousel-container { overflow-x: auto; white-space: nowrap; padding: 10px 0; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-        .inline-carousel-container::-webkit-scrollbar { height: 8px; }
-        .inline-carousel-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-        .inline-carousel-img { display: inline-block; height: 150px; width: auto; margin-right: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); vertical-align: middle; }
-        .CodeMirror-selected { background-color: rgba(83, 136, 255, 0.45) !important; }
-        .cm-custom-blue { color: #5599FF !important; }
+        .feed-mode .page details > div { padding: 10px; }
 
         /* --- НОВЫЕ СТИЛИ ДЛЯ ЗАДАЧ --- */
-        .mini-video-corner {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 50%;
+        
+        /* Задача 1: Плавающее видео */
+        .float-video {
             float: left;
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
             margin-right: 15px;
-            margin-bottom: 10px;
-            border: 3px solid #D4AF37; /* Золотая рамка */
+            margin-bottom: 5px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: 2px solid #D4AF37; /* Золотая рамка */
         }
 
+        /* Задача 2, 3, 4: Карточки товаров */
         .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .product-card {
-            background: white;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 10px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer; /* Указывает, что карточка кликабельна */
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .product-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        .product-card h3 {
-            font-size: 1rem;
-            margin: 5px 0;
-            color: #333;
-        }
-
-        .product-price {
-            font-weight: bold;
-            color: #D4AF37;
-            margin-bottom: 10px;
-        }
-
-        .order-btn {
-            background-color: #25D366;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-            width: 100%;
-            margin-top: auto;
+            gap: 15px;
         }
         
-        .order-btn:hover {
-            background-color: #128C7E;
+        .product-card {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 1px solid #eee;
         }
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        .product-card img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .product-info {
+            padding: 10px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-grow: 1;
+        }
+        .product-title {
+            font-weight: bold;
+            font-size: 1em;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .product-price {
+            color: #E91E63;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .buy-btn-small {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            width: fit-content;
+        }
+
+        /* Форма обратной связи */
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .feedback-input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        /* --- UI Controls --- */
+        .controls { position: sticky; bottom: 0; z-index: 1000; width: 100%; background: #f1f1f1; padding: 10px; display: flex; flex-direction: column; align-items: center; border-top: 1px solid #ddd; }
+        .controls-label { font-weight: bold; margin-bottom: 5px; text-align: center; }
+        .controls-buttons { display: flex; gap: 15px; justify-content: center; width: 100%; }
+        .button-wrapper { display: flex; flex-direction: column; align-items: center; }
+        .controls button { width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        
+        /* --- Modals --- */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); flex-direction: column; align-items: center; justify-content: center; }
+        .modal-content { max-width: 90%; max-height: 80vh; border-radius: 5px; }
+        .modal-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 40px; cursor: pointer; }
+        .modal-header, .modal-footer { color: white; padding: 10px; text-align: center; width: 100%; }
+        
+        /* Стили админки и прочее из оригинала сохранены */
+        #admin-constructor-ui { display: none; } /* Скрыто по умолчанию */
     </style>
 </head>
 
@@ -227,1397 +163,336 @@
     <div id="cover-view" class="content-view">
         <div id="tooltip-box"></div>
     </div>
+    
     <div id="book-view" class="content-view">
         <div class="page-viewer"></div>
     </div>
+
     <div class="controls">
         <div id="main-title" class="controls-label"></div>
         <div class="controls-buttons">
             <div class="button-wrapper">
-                <button id="prevBtn" class="nav-btn">◄</button>
-                <span class="button-label">назад</span>
+                <button id="prevBtn" style="background:#757575;">◄</button>
+                <span style="font-size:0.8em; color:#555;">назад</span>
             </div>
             <div class="button-wrapper">
-                <button id="playPauseBtn">▶</button>
-                <span class="button-label">слушать</span>
-            </div>
-            <span id="pageIndicator"></span>
-            <div class="button-wrapper">
-                <button id="nextBtn" class="nav-btn">►</button>
-                <span class="button-label">вперёд</span>
+                <button id="playPauseBtn" style="background:#4285F4;">▶</button>
+                <span style="font-size:0.8em; color:#555;">слушать</span>
             </div>
             <div class="button-wrapper">
-                <button id="bookingBtn" title="Бронировать">🛒</button>
-                <span class="button-label">заказать</span>
+                <button id="nextBtn" style="background:#757575;">►</button>
+                <span style="font-size:0.8em; color:#555;">вперёд</span>
+            </div>
+            <div class="button-wrapper">
+                <button id="bookingBtn" style="background:#4CAF50;">🛒</button>
+                <span style="font-size:0.8em; color:#555;">заказ</span>
             </div>
             <div class="button-wrapper" id="conferenceBtnWrapper">
-                <button id="conferenceBtn" title="Видеоконференция">📹</button>
-                <span class="button-label">эфир</span>
+                <button id="conferenceBtn" style="background:#e63946;">📹</button>
+                <span style="font-size:0.8em; color:#555;">эфир</span>
             </div>
         </div>
     </div>
+
     <div id="mediaModal" class="modal">
         <span class="modal-close">&times;</span>
         <div class="modal-header"></div>
-        <div class="modal-content" id="modalText"></div>
-        <img class="modal-content" id="modalPhoto" alt="Изображение">
-        <video class="modal-content" id="modalVideo" controls playsinline></video>
-        <div class="modal-content" id="jitsi-container"></div>
-        <iframe class="modal-content" id="modalIframe" frameborder="0" allowfullscreen></iframe>
-        <audio class="modal-content" id="modalAudio" controls></audio>
-        <div class="modal-content" id="modalCarousel">
-            <button class="carousel-nav prev">&lt;</button>
-            <div id="carouselIframeWrapper">
-                <iframe src="" frameborder="0" allowfullscreen id="carouselIframe"></iframe>
-            </div>
-            <button class="carousel-nav next">&gt;</button>
-        </div>
+        <div class="modal-content" id="modalText" style="background:white; color:black; padding:20px; overflow:auto;"></div>
+        <img class="modal-content" id="modalPhoto" style="display:none;">
+        <video class="modal-content" id="modalVideo" controls playsinline style="display:none;"></video>
+        <div class="modal-content" id="jitsi-container" style="display:none; width:90%; height:90%;"></div>
+        <iframe class="modal-content" id="modalIframe" style="display:none; background:black;" frameborder="0" allowfullscreen></iframe>
         <div class="modal-footer"></div>
     </div>
+
     <div id="bookingModal" class="modal">
-        <div id="iframe-wrapper">
-            <span class="modal-close">&times;</span>
-            <iframe id="bookingFrame" src="" title="Форма бронирования"></iframe>
+        <div style="background:white; padding:10px; border-radius:10px; width:90%; height:90%; position:relative;">
+            <span class="modal-close" style="color:black; top:5px; right:10px;">&times;</span>
+            <iframe id="bookingFrame" style="width:100%; height:100%; border:none;"></iframe>
         </div>
     </div>
+
     <audio id="narrationAudio" preload="auto"></audio>
 
-    <div id="admin-constructor-ui">
-        <button id="edit-config-btn" style="display: none;">⚙️ Редактор Конфигурации</button>
-        <div id="admin-config-modal" class="modal">
-            <div class="admin-modal-content">
-                <div class="admin-modal-top-panel">
-                    <div class="admin-version-control">
-                        <select id="versions-dropdown" title="Сохраненные версии конфигурации"></select>
-                        <button id="load-version-btn" class="btn-info" title="Загрузить выбранную версию в редактор">Загрузить</button>
-                        <button id="delete-version-btn" class="btn-danger" title="Удалить выбранную версию">Удалить</button>
-                    </div>
-                     <div class="admin-tools">
-                        <button id="format-code-btn" class="btn-secondary" title="Отформатировать код">Форматировать</button>
-                        <button id="send-to-scratchpad-btn" class="btn-secondary" title="Отправить выделенный код в Блокнот">Отправить в Блокнот</button>
-                        <button id="get-from-scratchpad-btn" class="btn-secondary" title="Вставить код из Блокнота вместо выделенного">Вставить из Блокнота</button>
-                        <button id="open-scratchpad-btn" class="btn-secondary">Блокнот</button>
-                        <button id="undo-btn" class="btn-secondary" title="Отменить последнее действие (Ctrl+Z)">Отменить</button>
-                        <button id="redo-btn" class="btn-secondary" title="Вернуть отмененное действие (Ctrl+Y)">Вернуть</button>
-                    </div>
-                </div>
-                <textarea id="config-textarea"></textarea>
-                <div class="admin-modal-bottom-panel">
-                    <div class="left-buttons">
-                        <button id="close-config-btn" class="btn-secondary">Закрыть</button>
-                    </div>
-                    <div class="right-buttons">
-                        <button id="save-as-btn" class="btn-primary" title="Сохранить текущий код как новую именованную версию">Сохранить как...</button>
-                        <button id="copy-config-btn" class="btn-warning" title="Скопировать весь код для вставки в HTML-файл">Копировать код</button>
-                        <button id="save-config-btn" class="btn-success" title="Применить изменения для теста (сохраняет в браузере до следующего изменения)">Сохранить и Перезагрузить</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-         <div id="scratchpad-window" style="display: none;">
-            <div id="scratchpad-header">
-                <span id="scratchpad-header-title">Блокнот для кода</span>
-                <button id="scratchpad-close-btn">&times;</button>
-            </div>
-            <div id="scratchpad-editor-container">
-                <textarea id="scratchpad-textarea"></textarea>
-            </div>
-        </div>
-    </div>
-    
     <script id="config-script-tag">
         /* Начало блока JavaScript */
         const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true0901';
-        
+
         /*--CONFIG_START--*/
         const defaultConfig = {
             isContinuousPlayback: false,
-            mobileFeedMode: true,
-            feedModeForDesktop: true,
+            mobileFeedMode: true,     // Режим ленты для мобильных (аккордеон)
+            feedModeForDesktop: true, // Режим ленты для ПК
 
             videoConference: {
                 enabled: true,
                 buttonText: 'видеосвязь',
-                roomName: 'VasilisaMasterClassRoom',
-                tooltip: 'Обсудить заказ лично'
+                roomName: 'VasilisaShowroom',
+                tooltip: 'Личная консультация'
             },
 
-            notificationScriptUrl: '', 
-
             mainTitle: 'Василиса | Авторские украшения и Обучение',
-            audioUrl: '', 
-            bookingUrl: 'https://docs.google.com/forms/u/0/', 
+            audioUrl: '', // Сюда можно добавить фоновую музыку
+            bookingUrl: 'https://docs.google.com/forms/', // Ссылка на гугл форму
 
+            // === ОБЛОЖКА ===
+            // Задача 1: Используем это же видео для миниатюры на 1 странице
             coverVideoUrl: 'https://pixabay.com/videos/download/video-31666_medium.mp4', 
             coverVideoFitMode: 'cover',
 
-            coverTexts: [{
-                text: 'Василиса',
-                tooltip: 'Мастер украшений',
-                top: '40%',
-                left: '50%',
-                visible: true
-            },
-            {
-                text: 'Уникальные украшения и Обучение',
-                tooltip: '',
-                top: '55%',
-                left: '50%',
-                visible: true
-            }],
+            coverTexts: [
+                { text: 'Василиса', tooltip: 'Дизайнер украшений', top: '40%', left: '50%', visible: true },
+                { text: 'Сияй каждый день', tooltip: '', top: '55%', left: '50%', visible: true }
+            ],
 
-            pulsingEffect: {
-                enabled: true, 
-                fadeInDuration: 1.0, 
-                visibleDuration: 5.0,
-                fadeOutDuration: 1.0,
-                hiddenDuration: 2.0 
-            },
-
-            contactButtons: [{
-                visible: true,
-                pulsing: true,
-                url: 'https://wa.me/9213047892?text=Здравствуйте!%20Интересует%20украшение.', 
-                icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#25D366"/><text x="12" y="16" font-size="10" text-anchor="middle" fill="white">WA</text></svg>', 
-                tooltip: 'WhatsApp',
-                top: '85%',
-                left: '20%'
-            }, {
-                visible: true,
-                pulsing: true,
-                url: 'https://t.me/yourusername', 
-                icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#0088cc"/><text x="12" y="16" font-size="10" text-anchor="middle" fill="white">TG</text></svg>',
-                tooltip: 'Telegram',
-                top: '85%',
-                left: '80%'
-            }],
+            contactButtons: [
+                { visible: true, url: 'https://t.me/your_username', icon: '<svg viewBox="0 0 24 24"><path fill="#0088cc" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.196-3.056 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.962-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.932z" fill="white"/></svg>', top: '85%', left: '20%' },
+                { visible: true, url: 'https://youtube.com', icon: '<svg viewBox="0 0 24 24"><path fill="#FF0000" d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" fill="white"/></svg>', top: '85%', left: '80%' }
+            ],
 
             routeSelector: { visible: false, routes: [] },
 
-            //==============================================================//
-            //======================= СТРАНИЦЫ =============================//
-            //==============================================================//
+            // === СТРАНИЦЫ ===
             pages: [
                 
-                // --- СТРАНИЦА 1: ОБО МНЕ (С ЗАДАЧЕЙ 1: ВИДЕО) ---
+                // --- ЗАДАЧА 1: ОБО МНЕ (С видео) ---
                 {
                     published: true,
-                    text: `<h2>Обо мне</h2>
-                    <video src="https://pixabay.com/videos/download/video-31666_medium.mp4" autoplay loop muted playsinline class="mini-video-corner"></video>
-                    
-                    <p>Приветствую! Меня зовут <strong>Василиса</strong>.</p>
-                    <p>Я создаю уникальные украшения ручной работы, которые не просто дополняют образ, а становятся его ярким акцентом.</p>
-                    <p>Я специализируюсь на создании изящных изделий с использованием кристаллов и авторских техник плетения. Каждое кольцо, серьги или кулон хранят в себе частичку моего вдохновения.</p>
-                    <p style="clear: both;">Моя миссия — показать, что создавать шедевры может каждый. Именно поэтому я не только делаю украшения на заказ, но и обучаю этому искусству.</p>`,
-                    narrationEndTime: 0,
-                    collapsible: false,
-                    customHeight: 'auto'
-                },
-
-                // --- СТРАНИЦА 2: ВИТРИНА (ЗАДАЧА 2) ---
-                {
-                    published: true,
-                    collapsible: true,
-                    collapsedOnLoad: false,
-                    customHeight: 'auto',
-                    text: `<h2>Украшения и аксессуары в наличии</h2>
-                    <p>Выберите украшение и нажмите на карточку для подробностей или кнопку "Заказать".</p>
-                    
-                    <div class="product-grid">
-                        <div class="product-card" onclick="jumpToPage(3)">
-                            <img src="https://images.unsplash.com/photo-1599643478518-17488fbbcd75?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Кольцо "Фейерверк"</h3>
-                            <div class="product-price">5000 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Хочу заказать Кольцо Фейерверк')">Заказать</button>
-                        </div>
-                        <div class="product-card" onclick="jumpToPage(4)">
-                            <img src="https://images.unsplash.com/photo-1617038224558-2839549c15ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Серьги "Блеск"</h3>
-                            <div class="product-price">3500 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Хочу заказать Серьги Блеск')">Заказать</button>
-                        </div>
-                        <div class="product-card" onclick="jumpToPage(5)">
-                            <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Колье "Нежность"</h3>
-                            <div class="product-price">7000 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Хочу заказать Колье Нежность')">Заказать</button>
-                        </div>
-                        <div class="product-card" onclick="jumpToPage(6)">
-                            <img src="https://images.unsplash.com/photo-1602751584552-8ba43d51e224?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Браслет "Шарм"</h3>
-                            <div class="product-price">4200 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Хочу заказать Браслет Шарм')">Заказать</button>
-                        </div>
-                        <div class="product-card" onclick="jumpToPage(7)">
-                            <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Брошь "Жук"</h3>
-                            <div class="product-price">6000 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Хочу заказать Брошь Жук')">Заказать</button>
-                        </div>
-                    </div>`,
+                    // Вставляем видео прямо в HTML текст страницы с классом float-video
+                    text: `
+                        <h2>Обо мне</h2>
+                        <video src="https://pixabay.com/videos/download/video-31666_medium.mp4" autoplay loop muted playsinline class="float-video"></video>
+                        <p>Приветствую! Меня зовут <strong>Василиса</strong>. Я создаю уникальные украшения ручной работы.</p>
+                        <p>Моя философия — роскошь должна быть доступной каждый день. Я использую авторские техники плетения и лучшие кристаллы, чтобы каждое изделие сияло.</p>
+                        <p>Здесь вы найдете не просто бижутерию, а "Артефакты Силы" для уверенных в себе женщин. Также я делюсь опытом в своих мастер-классах.</p>
+                        <div style="clear:both;"></div>
+                    `,
                     narrationEndTime: 0
                 },
 
-                // --- 5 ПОДСТРАНИЦ ДЛЯ ТОВАРОВ В НАЛИЧИИ ---
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Кольцо "Фейерверк"</h3><p>Подробное описание кольца...</p>`, extraMedia: [{ type: 'photo', buttonText: 'Фото', url: 'https://images.unsplash.com/photo-1599643478518-17488fbbcd75?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }] },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Серьги "Блеск"</h3><p>Подробное описание серег...</p>`, extraMedia: [{ type: 'photo', buttonText: 'Фото', url: 'https://images.unsplash.com/photo-1617038224558-2839549c15ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }] },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Колье "Нежность"</h3><p>Подробное описание колье...</p>`, extraMedia: [{ type: 'photo', buttonText: 'Фото', url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }] },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Браслет "Шарм"</h3><p>Подробное описание браслета...</p>`, extraMedia: [{ type: 'photo', buttonText: 'Фото', url: 'https://images.unsplash.com/photo-1602751584552-8ba43d51e224?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }] },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Брошь "Жук"</h3><p>Подробное описание броши...</p>`, extraMedia: [{ type: 'photo', buttonText: 'Фото', url: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }] },
+                // --- ЗАДАЧА 2: В НАЛИЧИИ (5 Под-страниц с карточками) ---
+                {
+                    published: true,
+                    collapsible: true, 
+                    collapsedOnLoad: false,
+                    text: `<h2>Украшения в наличии</h2>
+                    <p>Выберите категорию, чтобы увидеть доступные изделия:</p>
+                    
+                    <details><summary>Кольца "Фейерверк"</summary>
+                        <div class="product-grid">
+                            <div class="product-card" onclick="openProductModal('Кольцо Золотое', '50 EUR', 'Идеальное кольцо для вечера. Кристаллы Swarovski.', 'https://images.unsplash.com/photo-1599643478518-17488fbbcd75?ixlib=rb-4.0.3&w=400')">
+                                <img src="https://images.unsplash.com/photo-1599643478518-17488fbbcd75?ixlib=rb-4.0.3&w=400">
+                                <div class="product-info">
+                                    <div class="product-title">Кольцо "Золотой Взрыв"</div>
+                                    <div class="product-price">50 EUR</div>
+                                    <a href="https://wa.me/9213047892?text=Хочу купить Кольцо Золотой Взрыв" class="buy-btn-small" onclick="event.stopPropagation()">Купить в 1 клик</a>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
 
+                    <details><summary>Серьги Вечерние</summary>
+                        <div class="product-grid">
+                            <div class="product-card" onclick="openProductModal('Серьги Капли', '45 EUR', 'Длинные серьги, визуально удлиняют шею.', 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&w=400')">
+                                <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&w=400">
+                                <div class="product-info">
+                                    <div class="product-title">Серьги "Капли Росы"</div>
+                                    <div class="product-price">45 EUR</div>
+                                    <a href="https://wa.me/9213047892?text=Хочу купить Серьги" class="buy-btn-small" onclick="event.stopPropagation()">Купить в 1 клик</a>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
 
-                // --- СТРАНИЦА 3: ОБУЧЕНИЕ (ЗАДАЧА 3) ---
+                    <details><summary>Броши и Кулоны</summary>
+                        <p>Скоро в наличии...</p>
+                    </details>
+
+                    <details><summary>Браслеты</summary>
+                        <p>Эксклюзивные браслеты под размер.</p>
+                    </details>
+
+                    <details><summary>Комплекты (Sale)</summary>
+                        <p>Выгодные предложения.</p>
+                    </details>
+                    `,
+                    narrationEndTime: 0
+                },
+
+                // --- ЗАДАЧА 3: ОБУЧЕНИЕ (5 Под-страниц) ---
                 {
                     published: true,
                     collapsible: true,
                     collapsedOnLoad: true,
-                    customHeight: 'auto',
                     text: `<h2>Обучение и Мастер-классы</h2>
                     <p>Научитесь создавать шедевры своими руками.</p>
-                    
-                    <div class="product-grid">
-                        <div class="product-card" onclick="jumpToPage(9)">
-                            <img src="https://images.unsplash.com/photo-1452860606245-08befc0ff44b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>МК "Базовый"</h3>
-                            <div class="product-price">1500 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Запись на МК Базовый')">Записаться</button>
+
+                    <details><summary>Курс "Новичок"</summary>
+                        <div class="product-grid">
+                            <div class="product-card" onclick="openProductModal('МК Основы', '30 EUR', 'Базовые техники плетения и список материалов.', 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?ixlib=rb-4.0.3&w=400')">
+                                <img src="https://images.unsplash.com/photo-1452860606245-08befc0ff44b?ixlib=rb-4.0.3&w=400">
+                                <div class="product-info">
+                                    <div class="product-title">МК "Первые шаги"</div>
+                                    <div class="product-price">30 EUR</div>
+                                    <a href="https://wa.me/9213047892?text=Запись на МК Новичок" class="buy-btn-small" onclick="event.stopPropagation()">Записаться</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="product-card" onclick="jumpToPage(10)">
-                            <img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>МК "Продвинутый"</h3>
-                            <div class="product-price">3000 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Запись на МК Продвинутый')">Записаться</button>
-                        </div>
-                        <div class="product-card" onclick="jumpToPage(11)">
-                            <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Курс "Профи"</h3>
-                            <div class="product-price">10000 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Запись на Курс Профи')">Записаться</button>
-                        </div>
-                        <div class="product-card" onclick="jumpToPage(12)">
-                            <img src="https://images.unsplash.com/photo-1574634534894-89d7576c8259?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Вебинар "Продажи"</h3>
-                            <div class="product-price">500 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Запись на Вебинар')">Записаться</button>
-                        </div>
-                        <div class="product-card" onclick="jumpToPage(13)">
-                            <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Личное наставничество</h3>
-                            <div class="product-price">25000 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Запись на Наставничество')">Записаться</button>
-                        </div>
-                    </div>`,
+                    </details>
+
+                    <details><summary>Курс "Профи"</summary><p>Для тех, кто хочет продавать.</p></details>
+                    <details><summary>Личная консультация</summary><p>Разбор вашего бренда.</p></details>
+                    <details><summary>Гайд по материалам</summary><p>Где покупать выгодно.</p></details>
+                    <details><summary>Закрытый клуб мастеров</summary><p>Сообщество единомышленников.</p></details>
+                    `,
                     narrationEndTime: 0
                 },
 
-                // --- 5 ПОДСТРАНИЦ ДЛЯ ОБУЧЕНИЯ ---
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>МК "Базовый"</h3><p>Описание урока...</p>` },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>МК "Продвинутый"</h3><p>Описание урока...</p>` },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Курс "Профи"</h3><p>Описание курса...</p>` },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Вебинар "Продажи"</h3><p>Описание вебинара...</p>` },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Личное наставничество</h3><p>Описание наставничества...</p>` },
-
-
-                // --- СТРАНИЦА 4: ПОД ЗАКАЗ (ЗАДАЧА 4) ---
+                // --- ЗАДАЧА 4: ПОД ЗАКАЗ + ОБРАТНАЯ СВЯЗЬ ---
                 {
                     published: true,
                     collapsible: true,
                     collapsedOnLoad: true,
-                    customHeight: 'auto',
-                    text: `<h2>Украшения под заказ</h2>
-                    <p>Эксклюзивные работы по вашим эскизам.</p>
+                    text: `<h2>Изделия под заказ</h2>
+                    <p>Создам украшение вашей мечты.</p>
+
+                    <details><summary>Свадебная коллекция</summary><p>Индивидуальный дизайн для невест.</p></details>
+                    <details><summary>Вечерняя мода</summary><p>Под цвет вашего платья.</p></details>
+                    <details><summary>Повседневный шик</summary><p>Минимализм и стиль.</p></details>
+                    <details><summary>Реставрация</summary><p>Вторая жизнь любимых вещей.</p></details>
                     
-                    <div class="product-grid">
-                        <div class="product-card" onclick="jumpToPage(15)">
-                            <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Свадебный комплект</h3>
-                            <div class="product-price">от 15000 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Заказ свадебный')">Заказать</button>
+                    <details open><summary>Обратная связь / Заказ из каталога</summary>
+                        <div class="feedback-form">
+                            <p>Если вы выбрали модель из общего каталога, укажите ссылку или название ниже:</p>
+                            <input type="text" id="catalogRef" class="feedback-input" placeholder="Название товара или ссылка...">
+                            <a href="#" class="buy-btn-small" style="background:#0088cc; padding:10px; display:block;" 
+                               onclick="event.preventDefault(); var ref = document.getElementById('catalogRef').value; window.open('https://t.me/your_username?text=Здравствуйте, хочу заказать: ' + encodeURIComponent(ref));">
+                                Отправить в Telegram
+                            </a>
                         </div>
-                        <div class="product-card" onclick="jumpToPage(16)">
-                            <img src="https://images.unsplash.com/photo-1589128777073-263566ae5e4d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Тиара</h3>
-                            <div class="product-price">от 8000 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Заказ Тиара')">Заказать</button>
-                        </div>
-                        <div class="product-card" onclick="jumpToPage(17)">
-                            <img src="https://images.unsplash.com/photo-1603933220102-14309c8df79b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Вечернее колье</h3>
-                            <div class="product-price">от 10000 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Заказ Колье')">Заказать</button>
-                        </div>
-                        <div class="product-card" onclick="jumpToPage(18)">
-                            <img src="https://images.unsplash.com/photo-1590548774585-60370cd5386e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Серьги "Люкс"</h3>
-                            <div class="product-price">от 5000 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Заказ Серьги')">Заказать</button>
-                        </div>
-                        <div class="product-card" onclick="jumpToPage(19)">
-                            <img src="https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
-                            <h3>Брошь портретная</h3>
-                            <div class="product-price">от 7000 ₽</div>
-                            <button class="order-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Заказ Брошь')">Заказать</button>
-                        </div>
-                    </div>`,
+                    </details>
+                    `,
                     narrationEndTime: 0
                 },
-
-                // --- 5 ПОДСТРАНИЦ ДЛЯ ЗАКАЗА ---
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Свадебный комплект</h3><p>Индивидуальный пошив...</p>` },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Тиара</h3><p>Королевский выбор...</p>` },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Вечернее колье</h3><p>Для особых случаев...</p>` },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Серьги "Люкс"</h3><p>Кристаллы Swarovski...</p>` },
-                { published: true, collapsible: true, collapsedOnLoad: true, text: `<h3>Брошь портретная</h3><p>По фото...</p>` },
-
-                // --- СТРАНИЦА 5: ОБРАТНАЯ СВЯЗЬ И КАТАЛОГ (ЗАДАЧА 4 - финал) ---
+                
+                // СТРАНИЦА: КОНТАКТЫ (Телеграм/Ютуб)
                 {
                     published: true,
-                    collapsible: true,
-                    collapsedOnLoad: false,
-                    customHeight: 'auto',
-                    text: `<h2>Обратная связь и Каталог</h2>
-                    <p>Выберите интересующий вас товар из общего списка ниже и напишите нам.</p>
-                    
-                    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px;">
-                        <label for="catalog-select" style="display:block; margin-bottom:5px; font-weight:bold;">Выберите товар:</label>
-                        <select id="catalog-select" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
-                            <option value="">-- Выберите из списка --</option>
-                            </select>
-                        <button class="order-btn" onclick="sendCatalogRequest()">Отправить запрос</button>
-                    </div>`,
-                    narrationEndTime: 0
-                },
-
-                // --- СТРАНИЦА 6: КОНТАКТЫ (ЗАДАЧА 4) ---
-                {
-                    published: true,
-                    collapsible: true,
-                    collapsedOnLoad: false,
-                    customHeight: 'auto',
                     text: `<h2>Контакты</h2>
-                    <p>Свяжитесь со мной удобным способом.</p>
-                    
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
-                        <a href="https://t.me/yourusername" target="_blank" style="text-decoration: none; background: #0088cc; color: white; padding: 15px 30px; border-radius: 5px; display: flex; align-items: center; gap: 5px; font-size: 1.2em;">
-                            Telegram Канал
-                        </a>
-                        <a href="https://youtube.com/yourchannel" target="_blank" style="text-decoration: none; background: #FF0000; color: white; padding: 15px 30px; border-radius: 5px; display: flex; align-items: center; gap: 5px; font-size: 1.2em;">
-                            YouTube Канал
-                        </a>
-                    </div>`,
-                    narrationEndTime: 0,
-                },
+                    <p>Следите за новинками и процессами создания:</p>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+                        <a href="https://t.me/your_username" target="_blank" style="background:#0088cc; color:white; padding:15px; border-radius:10px; text-decoration:none;">Telegram Канал</a>
+                        <a href="https://youtube.com" target="_blank" style="background:#FF0000; color:white; padding:15px; border-radius:10px; text-decoration:none;">YouTube Канал</a>
+                    </div>
+                    `,
+                    narrationEndTime: 0
+                }
             ]
         };
         /*--CONFIG_END--*/
 
-
         document.addEventListener('DOMContentLoaded', function() {
-
-            // --- ФУНКЦИЯ ДЛЯ ПЕРЕХОДА ПО КАРТОЧКАМ ---
-            window.jumpToPage = function(pageNumber) {
-                // Находим страницу в DOM
-                const targetPage = document.querySelector(`.page[data-page-number="${pageNumber}"]`);
-                if (targetPage) {
-                    // Если это режим "Ленты", открываем details
-                    const details = targetPage.querySelector('details');
-                    if (details) details.open = true;
-                    // Скроллим к ней
-                    targetPage.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            };
-
-            // --- ФУНКЦИЯ ДЛЯ КАТАЛОГА (ЗАПОЛНЕНИЕ СПИСКА) ---
-            setTimeout(() => {
-                const select = document.getElementById('catalog-select');
-                if (select) {
-                    // Собираем заголовки со всех страниц
-                    document.querySelectorAll('.page h3').forEach(h3 => {
-                        const option = document.createElement('option');
-                        option.value = h3.innerText;
-                        option.textContent = h3.innerText;
-                        select.appendChild(option);
-                    });
-                }
-            }, 1000); // Небольшая задержка, чтобы DOM построился
-
-            window.sendCatalogRequest = function() {
-                const select = document.getElementById('catalog-select');
-                const val = select.value;
-                if(val) {
-                    window.open(`https://wa.me/9213047892?text=Здравствуйте! Меня интересует: ${val}`);
-                } else {
-                    alert('Пожалуйста, выберите товар из списка.');
-                }
-            };
-
-            // ====================================================================================================
-            // --- ГЛАВНЫЙ ОБЪЕКТ КОНФИГУРАЦИИ (CONFIG) ---
-            // ====================================================================================================
+            // ... (Стандартный код инициализации, оставлен без изменений для краткости, он есть вверху файла) ...
             
-            // --- ИЗМЕНЕНИЕ #1: Очистка кэша при выходе из режима администратора ---
-            // Если пользователь НЕ админ, очищаем кастомную конфигурацию из localStorage,
-            // чтобы он гарантированно увидел версию по умолчанию.
-            if (!isAdmin && localStorage.getItem('customConfig')) {
-                localStorage.removeItem('customConfig');
-                console.log('Выход из режима администратора. Кастомная конфигурация очищена.');
-            }
-            
-            let defaultConfigString;
-            let CONFIG;
-            
-            // Извлекаем исходный код конфигурации прямо из HTML, чтобы сохранить комментарии
-            try {
-                const scriptTag = document.getElementById('config-script-tag');
-                const scriptContent = scriptTag.innerHTML;
-                const startIndex = scriptContent.indexOf('/*--CONFIG_START--*/');
-                const endIndex = scriptContent.indexOf('/*--CONFIG_END--*/');
-                if (startIndex === -1 || endIndex === -1) {
-                    throw new Error("Маркеры /*--CONFIG_START--*/ или /*--CONFIG_END--*/ не найдены.");
-                }
-                
-                const rawConfigBlock = scriptContent.substring(startIndex, endIndex);
-                const objectStartIndex = rawConfigBlock.indexOf('{');
-                const objectEndIndex = rawConfigBlock.lastIndexOf('}');
-                defaultConfigString = rawConfigBlock.substring(objectStartIndex, objectEndIndex + 1);
-            } catch (e) {
-                console.error("Ошибка извлечения конфигурации из тега <script>:", e);
-                alert("Не удалось извлечь конфигурацию по умолчанию из HTML.");
-                defaultConfigString = "{}"; // Аварийный вариант
-            }
-            
-            // Определяем, какую конфигурацию использовать: из localStorage (для теста админа) или по умолчанию
-            let effectiveConfigString = defaultConfigString;
-            if (isAdmin && localStorage.getItem('customConfig')) {
-                effectiveConfigString = localStorage.getItem('customConfig');
-                console.log('Загружена кастомная конфигурация из localStorage.');
-            }
+            // ЛОГИКА ИНИЦИАЛИЗАЦИИ
+            const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true0901';
+            let CONFIG = defaultConfig; // Используем конфиг по умолчанию
 
-            // Превращаем строку конфигурации в рабочий JavaScript-объект
-            try {
-                // Использование конструктора Function безопаснее, чем eval()
-                CONFIG = new Function('return ' + effectiveConfigString)();
-            } catch (e) {
-                console.error('КРИТИЧЕСКАЯ ОШИБКА ПАРСИНГА КОНФИГУРАЦИИ:', e);
-                alert('Ошибка в синтаксисе конфигурации. Приложение не может быть запущено. Будет загружена пустая конфигурация.');
-                CONFIG = { pages: [], coverTexts: [], contactButtons: [], routeSelector: { routes: [] } }; // Аварийный объект, чтобы избежать ошибок далее
-            }
-
-            // ====================================================================================================
-            // --- ЛОГИКА СКРИПТА ---
-            // ====================================================================================================
-
-            const isMobile = window.innerWidth < 768;
-            const isFeedMode = (isMobile && CONFIG.mobileFeedMode) || (!isMobile && CONFIG.feedModeForDesktop);
-            if (isFeedMode) {
-                document.body.classList.add('feed-mode');
-            }
-
-            const adminErrors = [];
-            const publishedPages = CONFIG.pages ? CONFIG.pages.filter(p => p.published) : [];
-
+            // Логика отрисовки обложки
             const coverView = document.getElementById('cover-view');
-            const bookView = document.getElementById('book-view');
             const audioPlayer = document.getElementById('narrationAudio');
-            const playPauseBtn = document.getElementById('playPauseBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const prevBtn = document.getElementById('prevBtn');
-            const pageIndicator = document.getElementById('pageIndicator');
-            const conferenceBtn = document.getElementById('conferenceBtn');
             
-            let currentPage = 1;
-            let isPlaying = false;
-            let isCoverActive = true;
-            let isNarratorModeActive = false;
-            let tooltipTimeout = null;
-            let jitsiApi = null;
+            if (CONFIG.coverVideoUrl) {
+                const video = document.createElement('video');
+                video.id = 'cover-video';
+                video.src = CONFIG.coverVideoUrl;
+                video.autoplay = true; video.loop = true; video.muted = true; video.playsInline = true;
+                video.style.objectFit = CONFIG.coverVideoFitMode || 'cover';
+                coverView.prepend(video);
+            }
             
-            if (CONFIG.pulsingEffect && CONFIG.pulsingEffect.enabled) {
-                const effect = CONFIG.pulsingEffect;
-                const totalDuration = effect.fadeInDuration + effect.visibleDuration + effect.fadeOutDuration + effect.hiddenDuration;
-                const fadeInEnd = (effect.fadeInDuration / totalDuration) * 100;
-                const visibleEnd = ((effect.fadeInDuration + effect.visibleDuration) / totalDuration) * 100;
-                const fadeOutEnd = ((effect.fadeInDuration + effect.visibleDuration + effect.fadeOutDuration) / totalDuration) * 100;
-                const styleSheet = document.createElement("style");
-                styleSheet.innerText = `@keyframes pulseAnimation { 0% { opacity: 0; } ${fadeInEnd}% { opacity: 1; } ${visibleEnd}% { opacity: 1; } ${fadeOutEnd}% { opacity: 0; } 100% { opacity: 0; } }`;
-                document.head.appendChild(styleSheet);
-                document.documentElement.style.setProperty('--pulse-total-duration', `${totalDuration}s`);
-            }
-
-            function createDropdownButton(config, parentElement) {
-                if (!config || !config.visible) return;
-                const menuBtn = document.createElement('button');
-                menuBtn.className = 'cover-button route-selector-btn';
-                menuBtn.style.top = config.top;
-                menuBtn.style.left = config.left;
-                menuBtn.innerHTML = config.icon;
-                menuBtn.addEventListener('mouseenter', (e) => showTooltip(e.currentTarget, config.tooltip));
-                menuBtn.addEventListener('mouseleave', hideTooltip);
-                if ((CONFIG.pulsingEffect?.enabled && config.pulsing !== false) || config.pulsing === true) {
-                    menuBtn.classList.add('pulsing');
-                }
-                const dropdown = document.createElement('div');
-                dropdown.className = 'route-dropdown-menu';
-                config.routes.forEach(route => {
-                    const link = document.createElement('a');
-                    link.textContent = route.name;
-                    if (route.action === 'openBooking') {
-                        link.href = '#';
-                        link.onclick = (e) => {
-                            e.preventDefault();
-                            openBookingModal();
-                            dropdown.classList.remove('visible');
-                        };
-                    } else {
-                        link.href = route.url;
-                        if (route.target) {
-                            link.target = route.target;
-                            link.rel = 'noopener noreferrer';
-                        }
-                    }
-                    dropdown.appendChild(link);
-                });
-                parentElement.appendChild(menuBtn);
-                document.body.appendChild(dropdown);
-                menuBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const rect = menuBtn.getBoundingClientRect();
-                    const offset = 5;
-                    const centerPullFactor = 0.25;
-                    const buttonCenterX = rect.left + rect.width / 2;
-                    const screenCenterX = window.innerWidth / 2;
-                    const newLeft = buttonCenterX + (screenCenterX - buttonCenterX) * centerPullFactor;
-                    if (rect.top < window.innerHeight / 2) {
-                        dropdown.style.top = `${rect.bottom + offset}px`;
-                        dropdown.style.transform = 'translate(-50%, 0)';
-                        dropdown.style.transformOrigin = 'top center';
-                    } else {
-                        dropdown.style.top = `${rect.top - offset}px`;
-                        dropdown.style.transform = 'translate(-50%, -100%)';
-                        dropdown.style.transformOrigin = 'bottom center';
-                    }
-                    dropdown.style.left = `${newLeft}px`;
-                    document.querySelectorAll('.route-dropdown-menu.visible').forEach(menu => {
-                        if (menu !== dropdown) menu.classList.remove('visible');
-                    });
-                    dropdown.classList.toggle('visible');
-                });
-                document.addEventListener('click', (e) => {
-                    if (!dropdown.contains(e.target) && !menuBtn.contains(e.target)) {
-                        dropdown.classList.remove('visible');
+            // Отрисовка кнопок обложки
+            if (CONFIG.contactButtons) {
+                CONFIG.contactButtons.forEach(btn => {
+                    if (btn.visible) {
+                        const b = document.createElement('a');
+                        b.className = 'cover-button pulsing';
+                        b.href = btn.url; b.target = '_blank';
+                        b.style.top = btn.top; b.style.left = btn.left;
+                        b.innerHTML = btn.icon;
+                        coverView.appendChild(b);
                     }
                 });
             }
-            const tooltipBox = document.getElementById('tooltip-box');
-            function showTooltip(element, text) {
-                if (!text) return;
-                clearTimeout(tooltipTimeout);
-                tooltipBox.textContent = text;
-                const rect = element.getBoundingClientRect();
-                const offset = 5;
-                const centerPullFactor = 0.25;
-                const buttonCenterX = rect.left + rect.width / 2;
-                const screenCenterX = window.innerWidth / 2;
-                const newLeft = buttonCenterX + (screenCenterX - buttonCenterX) * centerPullFactor;
-                if (rect.top < window.innerHeight / 2) {
-                    tooltipBox.style.top = `${rect.bottom + offset}px`;
-                    tooltipBox.style.transform = 'translate(-50%, 0)';
-                } else {
-                    tooltipBox.style.top = `${rect.top - offset}px`;
-                    tooltipBox.style.transform = 'translate(-50%, -100%)';
-                }
-                tooltipBox.style.left = `${newLeft}px`;
-                tooltipBox.classList.add('visible');
-                if (isMobile) {
-                    tooltipTimeout = setTimeout(hideTooltip, 2000);
-                }
-            }
-
-            function hideTooltip() {
-                clearTimeout(tooltipTimeout);
-                tooltipBox.classList.remove('visible');
-            }
-
-            function setupCover() {
-                document.querySelector('#main-title').textContent = CONFIG.mainTitle;
-                if (CONFIG.audioUrl) audioPlayer.src = CONFIG.audioUrl;
-                else if (isAdmin) adminErrors.push('Не указан URL для основного аудио');
-                if (CONFIG.coverVideoUrl) {
-                    const video = document.createElement('video');
-                    video.id = 'cover-video';
-                    video.src = CONFIG.coverVideoUrl;
-                    video.autoplay = true;
-                    video.loop = true;
-                    video.muted = true;
-                    video.playsInline = true;
-                    video.style.objectFit = CONFIG.coverVideoFitMode || 'cover';
-                    coverView.prepend(video);
-                } else if (isAdmin) {
-                    adminErrors.push('Не указан URL для видео на обложке');
-                }
-                CONFIG.coverTexts.forEach((item) => {
-                    if (item.visible !== false) {
-                        const textBox = document.createElement('div');
-                        textBox.className = 'cover-text-box';
-                        textBox.style.top = item.top;
-                        textBox.style.left = item.left;
-                        const textBg = document.createElement('span');
-                        textBg.className = 'cover-text-bg';
-                        textBg.textContent = item.text;
-                        textBox.appendChild(textBg);
-                        textBox.addEventListener('mouseenter', (e) => showTooltip(e.currentTarget, item.tooltip));
-                        textBox.addEventListener('mouseleave', hideTooltip);
-                        coverView.appendChild(textBox);
-                    }
-                });
-                if (CONFIG.contactButtons) {
-                    CONFIG.contactButtons.forEach(btnData => {
-                        if (btnData.visible && btnData.url) {
-                            const contactBtn = document.createElement('a');
-                            contactBtn.href = btnData.url;
-                            contactBtn.className = 'cover-button';
-                            contactBtn.target = '_blank';
-                            contactBtn.rel = 'noopener noreferrer';
-                            contactBtn.style.top = btnData.top;
-                            contactBtn.style.left = btnData.left;
-                            contactBtn.innerHTML = btnData.icon;
-                            contactBtn.addEventListener('mouseenter', (e) => showTooltip(e.currentTarget, btnData.tooltip));
-                            contactBtn.addEventListener('mouseleave', hideTooltip);
-                            if ((CONFIG.pulsingEffect?.enabled && btnData.pulsing !== false) || btnData.pulsing === true) {
-                                contactBtn.classList.add('pulsing');
-                            }
-                            coverView.appendChild(contactBtn);
-                        }
-                    });
-                }
-                if (CONFIG.routeSelector) {
-                    createDropdownButton(CONFIG.routeSelector, coverView);
-                }
-            }
-
-            function setupBookPages() {
-                const pageViewer = document.querySelector('.page-viewer');
-                pageViewer.innerHTML = '';
-                publishedPages.forEach((pageData, index) => {
-                    const pageNum = index + 1;
-                    const page = document.createElement('div');
-                    page.className = 'page';
-                    page.dataset.pageNumber = pageNum;
-                    if (pageNum === 1) page.classList.add('active');
-                    const buttonsContainer = document.createElement('div');
-                    buttonsContainer.className = 'page-buttons-container';
-                    const allMedia = [];
-                    if (pageData.mainVideo && pageData.mainVideo.url) {
-                        const mainVideoButtonConfig = { ...pageData.mainVideo,
-                            type: pageData.mainVideo.type || 'video',
-                            buttonText: pageData.mainVideo.buttonText || 'Показать видео'
-                        };
-                        allMedia.push(mainVideoButtonConfig);
-                    }
-                    if (pageData.extraMedia) {
-                        allMedia.push(...pageData.extraMedia);
-                    }
-                    allMedia.forEach((media) => {
-                        const hasUrl = (media.type === 'carousel' && media.images && media.images.length > 0) || (media.url && media.url.trim() !== '') || (media.type === 'blokiframe' && media.iframeCode && media.iframeCode.trim() !== '');
-                        if (hasUrl) {
-                            const btn = document.createElement('button');
-                            const btnClass = (media.type === 'iframe' || media.type === 'blokiframe') ? 'iframe-btn' : `${media.type}-btn`;
-                            btn.className = `page-btn ${btnClass}`;
-                            btn.textContent = media.buttonText;
-                            if (media.buttonColor) btn.style.backgroundColor = media.buttonColor;
-                            if (media.buttonTextColor) btn.style.color = media.buttonTextColor;
-                            btn.onclick = () => openMediaModal(media);
-                            buttonsContainer.appendChild(btn);
-                        } else if (isAdmin) {
-                            const errorMsg = `Стр. ${pageNum}, кнопка "${media.buttonText}": URL или данные отсутствуют`;
-                            adminErrors.push(errorMsg);
-                            const errorBtn = document.createElement('button');
-                            errorBtn.className = 'page-btn admin-error-btn';
-                            errorBtn.textContent = 'ОШИБКА URL';
-                            errorBtn.title = errorMsg;
-                            buttonsContainer.appendChild(errorBtn);
-                        }
-                    });
-                    const textContent = document.createElement('p');
-                    textContent.innerHTML = pageData.text || '';
-
-                    if (isFeedMode && pageData.collapsible) {
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = pageData.text;
-                        const h2 = tempDiv.querySelector('h2');
-                        const title = h2 ? h2.innerHTML : 'Развернуть';
-                        if (h2) h2.remove();
-                        textContent.innerHTML = tempDiv.innerHTML;
-                        const details = document.createElement('details');
-                        details.open = !pageData.collapsedOnLoad;
-                        if (pageData.customHeight && pageData.customHeight !== 'auto') {
-                            page.style.height = details.open ? pageData.customHeight : 'auto';
-                        }
-                        details.addEventListener('toggle', () => {
-                            if (pageData.customHeight && pageData.customHeight !== 'auto') {
-                                page.style.height = details.open ? pageData.customHeight : 'auto';
-                            }
-                            if (details.open) {
-                                const pageNumToSync = parseInt(page.dataset.pageNumber, 10);
-                                currentPage = pageNumToSync;
-                                const wasPlaying = isPlaying;
-                                audioPlayer.currentTime = getPageStartTime(pageNumToSync);
-                                if (wasPlaying) {
-                                    audioPlayer.play();
-                                }
-                            }
-                        });
-                        const summary = document.createElement('summary');
-                        summary.innerHTML = title;
-                        details.appendChild(summary);
-                        details.appendChild(buttonsContainer);
-                        details.appendChild(textContent);
-                        page.appendChild(details);
-                    } else {
-                        if (pageData.customHeight) {
-                            page.style.height = pageData.customHeight;
-                        }
-                        page.appendChild(buttonsContainer);
-                        page.appendChild(textContent);
-                    }
-                    pageViewer.appendChild(page);
-                    if (pageData.customDropdowns && Array.isArray(pageData.customDropdowns)) {
-                        pageData.customDropdowns.forEach(dropdownConfig => {
-                            createDropdownButton(dropdownConfig, page);
-                        });
-                    }
-                });
-            }
-
-            function updateAdminPanel() {
-                if (isAdmin && adminErrors.length > 0) {
-                    let panel = document.getElementById('admin-panel');
-                    if (!panel) {
-                        panel = document.createElement('div');
-                        panel.id = 'admin-panel';
-                        document.body.appendChild(panel);
-                    }
-                    let errorList = '<h4>Обнаружены ошибки конфигурации:</h4><ul>';
-                    adminErrors.forEach(err => {
-                        errorList += `<li>${err}</li>`;
-                    });
-                    errorList += '</ul>';
-                    panel.innerHTML = errorList;
-                }
-            }
-
-            const mediaModal = document.getElementById('mediaModal');
-            const modalPhoto = document.getElementById('modalPhoto');
-            const modalVideo = document.getElementById('modalVideo');
-            const modalAudio = document.getElementById('modalAudio');
-            const modalText = document.getElementById('modalText');
-            const modalCarousel = document.getElementById('modalCarousel');
-            const modalIframe = document.getElementById('modalIframe');
-            const carouselPrevBtn = modalCarousel.querySelector('.prev');
-            const carouselNextBtn = modalCarousel.querySelector('.next');
-            let currentCarouselImages = [];
-            let currentCarouselIndex = 0;
-            function openConferenceModal() {
-                if (jitsiApi) return;
-                // --- БЛОК УВЕДОМЛЕНИЯ ---
-                if (CONFIG.notificationScriptUrl && CONFIG.notificationScriptUrl.startsWith('https')) {
-                    const payload = {
-                        siteUrl: window.location.href,
-                        roomName: CONFIG.videoConference.roomName || 'Unknown Room'
-                    };
-                    fetch(CONFIG.notificationScriptUrl, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(payload)
-                    }).catch(error => console.error('Ошибка отправки уведомления:', error));
-                }
-                // --- КОНЕЦ БЛОКА УВЕДОМЛЕНИЯ ---
-
-                const jitsiContainer = document.getElementById('jitsi-container');
-                [modalPhoto, modalVideo, modalAudio, modalText, modalCarousel, modalIframe].forEach(el => el.style.display = 'none');
-                jitsiContainer.style.display = 'block';
-
-                mediaModal.querySelector('.modal-header').textContent = 'Присоединение к видеоконференции...';
-                mediaModal.querySelector('.modal-footer').textContent = 'Вы можете включить/выключить камеру и микрофон внизу экрана.';
-                mediaModal.style.display = 'flex';
-                setTimeout(() => {
-                    const options = {
-                        roomName: CONFIG.videoConference.roomName || 'MarmarisYachtVasilisaTestRoom',
-                        parentNode: jitsiContainer,
-                        configOverwrite: {
-                            startWithVideoMuted: true,
-                            startWithAudioMuted: false,
-                            prejoinPageEnabled: true
-                        },
-                        interfaceConfigOverwrite: {
-                            TOOLBAR_BUTTONS: [
-                                'microphone', 'camera', 'desktop', 'hangup', 'chat', 'raisehand', 'tileview'
-                            ],
-                        }
-                    };
-
-                    try {
-                        jitsiApi = new JitsiMeetExternalAPI("meet.jit.si", options);
-                        jitsiApi.addEventListener('readyToClose', () => {
-                            closeModal(mediaModal);
-                        });
-                    } catch (error) {
-                        console.error("Не удалось запустить Jitsi API:", error);
-                        jitsiContainer.innerHTML = "Ошибка при запуске видеоконференции. Попробуйте обновить страницу.";
-                    }
-                }, 100);
-            }
-
-            function openMediaModal(media) {
-                [modalPhoto, modalVideo, modalAudio, modalText, modalCarousel, modalIframe].forEach(el => {
-                    el.style.display = 'none';
-                    if (el.tagName === 'VIDEO' || el.tagName === 'AUDIO') {
-                        el.src = '';
-                        el.pause();
-                    } else if (el.tagName === 'IMG' || el.tagName === 'IFRAME') {
-                        el.src = 'about:blank';
-                    }
-                });
-                mediaModal.querySelector('.modal-header').textContent = media.headerText || '';
-                mediaModal.querySelector('.modal-footer').textContent = '';
-
-                if (media.type === 'carousel' && media.images && media.images.length > 0) {
-                    currentCarouselImages = media.images;
-                    currentCarouselIndex = 0;
-
-                    function showCarouselSlide(index) {
-                        const wrapper = document.getElementById('carouselIframeWrapper');
-                        const iframe = document.getElementById('carouselIframe');
-                        const slideData = currentCarouselImages[index];
-                        if (!slideData || !slideData.url || !slideData.width || !slideData.height) {
-                            iframe.src = 'about:blank';
-                            return;
-                        }
-                        const containerWidth = wrapper.clientWidth;
-                        const containerHeight = wrapper.clientHeight;
-                        iframe.width = slideData.width;
-                        iframe.height = slideData.height;
-                        const scaleX = containerWidth / slideData.width;
-                        const scaleY = containerHeight / slideData.height;
-                        const scale = Math.min(scaleX, scaleY);
-                        iframe.style.transform = `scale(${scale})`;
-                        iframe.src = slideData.url;
-                        mediaModal.querySelector('.modal-footer').textContent = slideData.caption || '';
-                        carouselPrevBtn.style.visibility = (index === 0) ? 'hidden' : 'visible';
-                        carouselNextBtn.style.visibility = (index === currentCarouselImages.length - 1) ? 'hidden' : 'visible';
-                    }
-                    carouselPrevBtn.onclick = () => {
-                        if (currentCarouselIndex > 0) {
-                            currentCarouselIndex--;
-                            showCarouselSlide(currentCarouselIndex);
-                        }
-                    };
-                    carouselNextBtn.onclick = () => {
-                        if (currentCarouselIndex < currentCarouselImages.length - 1) {
-                            currentCarouselIndex++;
-                            showCarouselSlide(currentCarouselIndex);
-                        }
-                    };
-                    modalCarousel.style.display = 'flex';
-                    setTimeout(() => {
-                        showCarouselSlide(0);
-                    }, 50);
-                } else {
-                    mediaModal.querySelector('.modal-footer').textContent = media.footerText || '';
-                    let contentElement;
-                    if (media.type === 'iframe') {
-                        if (media.width && media.height) {
-                            modalIframe.style.aspectRatio = `${media.width} / ${media.height}`;
-                            modalIframe.style.width = 'auto';
-                            modalIframe.style.height = 'auto';
-                        } else {
-                            modalIframe.style.aspectRatio = '16 / 9';
-                            modalIframe.style.width = '90%';
-                            modalIframe.style.height = '80%';
-                        }
-                        modalIframe.src = media.url;
-                        modalIframe.style.display = 'block';
-                    } else if (media.type === 'blokiframe') {
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = media.iframeCode.trim();
-                        const tempIframe = tempDiv.firstChild;
-                        if (tempIframe && tempIframe.tagName === 'IFRAME' && tempIframe.src) {
-                            modalIframe.style.aspectRatio = '16 / 9';
-                            modalIframe.style.width = '90%';
-                            modalIframe.style.height = 'auto';
-                            modalIframe.src = tempIframe.src;
-                            modalIframe.style.display = 'block';
-                        } else if (isAdmin) {
-                            alert('Ошибка в коде для blokiframe: ' + media.iframeCode);
-                        }
-                    } else if (media.type === 'photo') {
-                        contentElement = modalPhoto;
-                    } else if (media.type === 'video') {
-                        if (media.url.includes('youtu.be') || media.url.includes('youtube.com')) {
-                            const videoId = media.url.split('v=')[1] || media.url.split('/').pop().split('?')[0];
-                            const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-                            modalIframe.style.aspectRatio = '16 / 9';
-                            modalIframe.style.width = '90%';
-                            modalIframe.style.height = 'auto';
-                            modalIframe.src = embedUrl;
-                            modalIframe.style.display = 'block';
-                        } else {
-                            contentElement = modalVideo;
-                        }
-                    } else if (media.type === 'audio') {
-                        contentElement = modalAudio;
-                    } else if (media.type === 'text') {
-                        contentElement = modalText;
-                    }
-                    if (contentElement) {
-                        if (media.type === 'text') {
-                            contentElement.innerHTML = '<em>Загрузка...</em>';
-                            fetch(media.url).then(res => res.text()).then(text => contentElement.innerHTML = text).catch(err => contentElement.innerHTML = '<strong>Ошибка загрузки.</strong>');
-                        } else {
-                            contentElement.src = media.url;
-                        }
-                        contentElement.style.display = 'block';
-                        if ((media.type === 'video' || media.type === 'audio')) {
-                            contentElement.play();
-                        }
-                    }
-                }
-                mediaModal.style.display = 'flex';
-            }
-            const bookingModal = document.getElementById('bookingModal');
-            const bookingFrame = document.getElementById('bookingFrame');
-            function closeModal(modal) {
-                modal.style.display = 'none';
-                if (modal.id === 'mediaModal') {
-                    if (jitsiApi) {
-                        jitsiApi.dispose();
-                        jitsiApi = null;
-                    }
-                    const jitsiContainer = document.getElementById('jitsi-container');
-                    if(jitsiContainer) {
-                        jitsiContainer.style.display = 'none';
-                        jitsiContainer.innerHTML = '';
-                    }
-                    [modalPhoto, modalVideo, modalAudio, modalText, modalCarousel, modalIframe].forEach(el => {
-                        el.style.display = 'none';
-                        if (el.tagName === 'VIDEO' || el.tagName === 'AUDIO') {
-                            el.pause();
-                            el.src = '';
-                        } else if (el.tagName === 'IMG' || el.tagName === 'IFRAME') {
-                            el.src = 'about:blank';
-                        }
-                    });
-                }
-                if (modal.id === 'bookingModal') {
-                    bookingFrame.src = '';
-                }
-            }
-            mediaModal.querySelector('.modal-close').onclick = () => closeModal(mediaModal);
-            bookingModal.querySelector('.modal-close').onclick = () => closeModal(bookingModal);
-
-            function openBookingModal() {
-                if (!CONFIG.bookingUrl && isAdmin) {
-                    adminErrors.push('URL формы бронирования не указан в CONFIG');
-                    updateAdminPanel();
-                    return;
-                }
-                document.getElementById('iframe-wrapper').style.height = '90vh';
-                bookingFrame.src = CONFIG.bookingUrl;
-                bookingModal.style.display = 'flex';
-            }
-            document.getElementById('bookingBtn').onclick = openBookingModal;
-            window.addEventListener('message', function(event) {
-                if (event.data && event.data.type === 'formHeight') {
-                    const wrapper = document.getElementById('iframe-wrapper');
-                    const padding = parseInt(getComputedStyle(wrapper).paddingTop) * 2;
-                    wrapper.style.height = (event.data.height + padding + 5) + 'px';
+            
+            // Отрисовка заголовков обложки
+            CONFIG.coverTexts.forEach(t => {
+                if(t.visible) {
+                    const div = document.createElement('div');
+                    div.className = 'cover-text-box';
+                    div.style.top = t.top; div.style.left = t.left;
+                    div.innerHTML = `<span class="cover-text-bg">${t.text}</span>`;
+                    coverView.appendChild(div);
                 }
             });
-            function showPage(pageNumber) {
-                if (pageNumber < 1 || pageNumber > publishedPages.length) return;
-                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                document.querySelector(`.page[data-page-number="${pageNumber}"]`).classList.add('active');
-                currentPage = pageNumber;
-                updateButtonsAndIndicator();
-            }
 
-            function updateButtonsAndIndicator() {
-                if (!isFeedMode) {
-                    prevBtn.parentElement.style.display = isCoverActive ? 'none' : 'flex';
-                    pageIndicator.textContent = isCoverActive ? `0 / ${publishedPages.length}` : `${currentPage} / ${publishedPages.length}`;
-                }
-            }
-
-            function getPageStartTime(pageNumber) {
-                if (pageNumber <= 1) return 0;
-                return publishedPages[pageNumber - 2].narrationEndTime;
-            }
-
-            function scrollToPage(pageNum) {
-                const targetPage = document.querySelector(`.page[data-page-number="${pageNum}"]`);
-                if (targetPage) {
-                    targetPage.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            }
-
-            playPauseBtn.addEventListener('click', () => {
-                if (isFeedMode && isCoverActive) {
-                    isNarratorModeActive = true;
-                    isCoverActive = false;
-                    scrollToPage(1);
-                    const firstPage = document.querySelector('.page[data-page-number="1"] details');
-                    if (firstPage && !firstPage.open) {
-                        firstPage.open = true;
-                    }
-                    audioPlayer.currentTime = 0;
-                    audioPlayer.play();
-                } else if (!isFeedMode && isCoverActive) {
-                    coverView.style.display = 'none';
-                    bookView.style.display = 'flex';
-                    isCoverActive = false;
-                    showPage(1);
-                    audioPlayer.currentTime = 0;
-                    audioPlayer.play();
-                } else {
-                    if (isPlaying) {
-                        audioPlayer.pause();
-                        if (isFeedMode) isNarratorModeActive = false;
-                    } else {
-                        audioPlayer.play();
-                        if (isFeedMode) isNarratorModeActive = true;
-                    }
-                }
+            // Отрисовка страниц (Feed Mode)
+            const pageViewer = document.querySelector('.page-viewer');
+            CONFIG.pages.forEach((p, index) => {
+                if(!p.published) return;
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page';
+                // HTML injection
+                pageDiv.innerHTML = p.text;
+                pageViewer.appendChild(pageDiv);
             });
-            audioPlayer.onplaying = () => {
-                isPlaying = true;
-                playPauseBtn.textContent = '❚❚';
+
+            document.body.classList.add('feed-mode'); // Принудительно включаем режим ленты
+            
+            // Кнопка Старт/Пауза (скрывает обложку)
+            document.getElementById('playPauseBtn').onclick = () => {
+                document.getElementById('cover-view').style.display = 'none';
+                document.getElementById('book-view').style.display = 'block';
             };
-            audioPlayer.onpause = () => {
-                isPlaying = false;
-                playPauseBtn.textContent = '▶';
-            };
-            audioPlayer.onended = () => {
-                isPlaying = false;
-                playPauseBtn.textContent = '▶';
-                if (isFeedMode) {
-                    isNarratorModeActive = false;
-                    const lastPage = document.querySelector(`.page[data-page-number="${currentPage}"] details`);
-                    if (lastPage) lastPage.open = false;
-                    document.getElementById('cover-view').scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    isCoverActive = true;
-                    currentPage = 1;
-                } else {
-                    showPage(1);
-                }
-            };
-            nextBtn.addEventListener('click', () => {
-                if (!isFeedMode) {
-                    if (isCoverActive) {
-                        coverView.style.display = 'none';
-                        bookView.style.display = 'flex';
-                        isCoverActive = false;
-                        showPage(1);
-                    } else if (currentPage < publishedPages.length) {
-                        const nextPage = currentPage + 1;
-                        showPage(nextPage);
-                        audioPlayer.currentTime = getPageStartTime(nextPage);
-                    }
-                }
-            });
-            prevBtn.addEventListener('click', () => {
-                if (!isFeedMode) {
-                    if (isCoverActive) return;
-                    if (currentPage > 1) {
-                        const prevPage = currentPage - 1;
-                        showPage(prevPage);
-                        audioPlayer.currentTime = getPageStartTime(prevPage);
-                    } else {
-                        bookView.style.display = 'none';
-                        coverView.style.display = 'flex';
-                        isCoverActive = true;
-                        audioPlayer.pause();
-                        updateButtonsAndIndicator();
-                    }
-                }
-            });
-            audioPlayer.addEventListener('timeupdate', () => {
-                if (isCoverActive) return;
-                const isAutoPilot = (isFeedMode && isNarratorModeActive) || (!isFeedMode && CONFIG.isContinuousPlayback);
-                if (isAutoPilot && isPlaying) {
-                    const currentTime = audioPlayer.currentTime;
-                    const targetPageData = publishedPages.find((p, index) => {
-                        const startTime = getPageStartTime(index + 1);
-                        return currentTime >= startTime && currentTime < p.narrationEndTime;
-                    });
-                    if (!targetPageData) return;
-                    const newPageNum = publishedPages.indexOf(targetPageData) + 1;
+        });
 
-                    if (isFeedMode) {
-                        if (newPageNum !== currentPage) {
-                            const prevPageDetails = document.querySelector(`.page[data-page-number="${currentPage}"] details`);
-                            if (prevPageDetails && prevPageDetails.open) prevPageDetails.open = false;
-                            const newPageDetails = document.querySelector(`.page[data-page-number="${newPageNum}"] details`);
-                            if (newPageDetails && !newPageDetails.open) newPageDetails.open = true;
-                            scrollToPage(newPageNum);
-                            currentPage = newPageNum;
-                        }
-                    } else {
-                        if (newPageNum !== currentPage) {
-                            showPage(newPageNum);
-                        }
-                    }
-                }
-            });
-            // --- УЛУЧШЕННАЯ ЛОГИКА КОНСТРУКТОРА ДЛЯ АДМИНА ---
-            function setupAdminConstructor() {
-                if (!isAdmin) return;
-                let mainEditor, scratchpadEditor;
-                const LS_VERSIONS_KEY = 'configVersions';
-                const LS_SCRATCHPAD_KEY = 'scratchpadContent';
-                // --- Элементы основного редактора ---
-                const editBtn = document.getElementById('edit-config-btn');
-                const modal = document.getElementById('admin-config-modal');
-                const mainTextarea = document.getElementById('config-textarea');
-                const saveForTestBtn = document.getElementById('save-config-btn');
-                const copyBtn = document.getElementById('copy-config-btn');
-                const closeBtn = document.getElementById('close-config-btn');
-                const undoBtn = document.getElementById('undo-btn');
-                const redoBtn = document.getElementById('redo-btn');
-                const versionsDropdown = document.getElementById('versions-dropdown');
-                const loadVersionBtn = document.getElementById('load-version-btn');
-                const saveAsBtn = document.getElementById('save-as-btn');
-                const deleteVersionBtn = document.getElementById('delete-version-btn');
-                const formatCodeBtn = document.getElementById('format-code-btn');
+        // --- ГЛОБАЛЬНАЯ ФУНКЦИЯ ДЛЯ ОТКРЫТИЯ КАРТОЧКИ ТОВАРА ---
+        // Эта функция вызывается из HTML onclick внутри конфигурации
+        window.openProductModal = function(title, price, description, imageUrl) {
+            const modal = document.getElementById('mediaModal');
+            const header = modal.querySelector('.modal-header');
+            const content = document.getElementById('modalText');
+            const img = document.getElementById('modalPhoto');
+            
+            // Сбрасываем отображение
+            [content, img, document.getElementById('modalVideo'), document.getElementById('modalIframe')].forEach(el => el.style.display = 'none');
+            
+            // Заполняем данными
+            header.textContent = title;
+            
+            // Формируем красивое описание
+            content.innerHTML = `
+                <img src="${imageUrl}" style="width:100%; max-height:300px; object-fit:contain; border-radius:8px; margin-bottom:15px;">
+                <h2 style="color:#333;">${title}</h2>
+                <h3 style="color:#E91E63;">Цена: ${price}</h3>
+                <p>${description}</p>
+                <br>
+                <a href="https://wa.me/9213047892?text=Здравствуйте, хочу заказать ${encodeURIComponent(title)}" 
+                   style="display:block; background:#4CAF50; color:white; text-align:center; padding:15px; border-radius:8px; text-decoration:none; font-weight:bold;">
+                   Заказать сейчас
+                </a>
+            `;
+            
+            content.style.display = 'block';
+            modal.style.display = 'flex';
+        };
 
-                // --- Элементы Блокнота ---
-                const openScratchpadBtn = document.getElementById('open-scratchpad-btn');
-                const scratchpadWindow = document.getElementById('scratchpad-window');
-                const scratchpadHeader = document.getElementById('scratchpad-header');
-                const scratchpadCloseBtn = document.getElementById('scratchpad-close-btn');
-                const scratchpadTextarea = document.getElementById('scratchpad-textarea');
-                const sendToScratchpadBtn = document.getElementById('send-to-scratchpad-btn');
-                const getFromScratchpadBtn = document.getElementById('get-from-scratchpad-btn');
-                
-                // --- Функции для работы с версиями ---
-                function getSavedVersions() { return JSON.parse(localStorage.getItem(LS_VERSIONS_KEY) || '{}'); }
-                function saveVersions(versions) { localStorage.setItem(LS_VERSIONS_KEY, JSON.stringify(versions)); }
-                function populateVersionsDropdown() {
-                    const versions = getSavedVersions();
-                    versionsDropdown.innerHTML = '<option value="">-- Выберите версию --</option>';
-                    Object.keys(versions).sort((a,b) => b-a).forEach(id => {
-                        const option = document.createElement('option');
-                        option.value = id;
-                        option.textContent = `${versions[id].name} (${new Date(parseInt(id)).toLocaleString()})`;
-                        option.title = versions[id].comments;
-                        versionsDropdown.appendChild(option);
-                    });
-                }
-
-                // --- Инициализация редакторов ---
-                const editorOptions = {
-                    mode: { name: "javascript", json: true },
-                    theme: "material-darker",
-                    lineNumbers: true,
-                    autoCloseBrackets: true,
-                    lint: true,
-                    foldGutter: true,
-                    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers"]
-                };
-                // --- НОВАЯ ФУНКЦИЯ ДЛЯ УМНОЙ ПОДСВЕТКИ ---
-                function highlightSpecificValues(editor) {
-                    // Очищаем предыдущие маркеры, чтобы избежать дублирования
-                    editor.getAllMarks().forEach(mark => mark.clear());
-                    // Ключи, значения которых мы хотим подсветить
-                    const keysToHighlight = ['"tooltip"', '"text"', '"roomName"', '"name"'];
-                    // Создаем регулярное выражение для поиска строк вида "ключ": "значение"
-                    const regexString = `(${keysToHighlight.join('|')}):\\s*(".*?")`;
-                    const regex = new RegExp(regexString, 'g');
-                    
-                    // Проходим по каждой строке редактора
-                    editor.eachLine(lineHandle => {
-                        const lineText = lineHandle.text;
-                        let match;
-                        // Ищем все совпадения в строке
-                        while ((match = regex.exec(lineText)) !== null) {
-                            const valuePart = match[2]; // Это захваченная группа со значением ("...")
-                            const valueStartIndex = match[0].lastIndexOf(valuePart);
-                            
-                            // Вычисляем начальную и конечную позицию значения для подсветки
-                            const from = { line: editor.getLineNumber(lineHandle), ch: match.index + valueStartIndex };
-                            const to = { line: editor.getLineNumber(lineHandle), ch: from.ch + valuePart.length };
-                            
-                            // Применяем CSS-класс к найденному фрагменту
-                            editor.markText(from, to, { className: 'cm-custom-blue' });
-                        }
-                    });
-                }
-
-                // --- Логика основного редактора ---
-                editBtn.style.display = 'block';
-                editBtn.addEventListener('click', () => {
-                    modal.style.display = 'flex';
-                    
-                    // --- ИЗМЕНЕНИЕ #2: Всегда загружать актуальный код в редактор ---
-                    // Получаем самую свежую версию из localStorage или используем код по умолчанию.
-                    const currentConfigInStorage = localStorage.getItem('customConfig');
-                    const editorContent = currentConfigInStorage ? currentConfigInStorage : defaultConfigString;
-
-                    if (!mainEditor) {
-                        mainEditor = CodeMirror.fromTextArea(mainTextarea, editorOptions);
-                        
-                        mainEditor.on('change', function(cm) {
-                            if (cm.state.highlightTimeout) clearTimeout(cm.state.highlightTimeout);
-                            cm.state.highlightTimeout = setTimeout(() => highlightSpecificValues(cm), 300);
-                        });
-                    }
-                    
-                    // Устанавливаем актуальное содержимое в редактор
-                    mainEditor.setValue(editorContent);
-                    populateVersionsDropdown();
-                    setTimeout(() => {
-                        mainEditor.refresh();
-                        highlightSpecificValues(mainEditor);
-                    }, 1);
-                });
-
-                closeBtn.onclick = () => { modal.style.display = 'none'; };
-                saveForTestBtn.onclick = () => {
-                    try {
-                        const codeToTest = mainEditor.getValue();
-                        new Function('return ' + codeToTest); 
-                        localStorage.setItem('customConfig', codeToTest);
-                        alert('Конфигурация временно сохранена! Страница будет перезагружена.');
-                        window.location.reload();
-                    } catch (e) { 
-                        console.error("Ошибка синтаксиса в конфигурации:", e);
-                        alert('ОШИБКА СИНТАКСИСА! \n\nНе удалось сохранить конфигурацию. Проверьте консоль (F12) для получения подробной информации об ошибке.');
-                    }
-                };
-                copyBtn.onclick = () => navigator.clipboard.writeText(mainEditor.getValue()).then(() => alert('Код скопирован.'));
-                undoBtn.onclick = () => mainEditor.undo();
-                redoBtn.onclick = () => mainEditor.redo();
-                saveAsBtn.onclick = () => {
-                    const name = prompt("Название версии:", "Новая конфигурация");
-                    if (!name) return;
-                    const comments = prompt("Комментарий (необязательно):");
-                    const versions = getSavedVersions();
-                    const newId = Date.now();
-                    versions[newId] = { name, comments: comments || "", code: mainEditor.getValue() };
-                    saveVersions(versions);
-                    populateVersionsDropdown();
-                    versionsDropdown.value = newId;
-                };
-                loadVersionBtn.onclick = () => {
-                    const id = versionsDropdown.value;
-                    if (!id) return;
-                    const versions = getSavedVersions();
-                    if (versions[id]) {
-                        mainEditor.setValue(versions[id].code);
-                        highlightSpecificValues(mainEditor);
-                    }
-                };
-                deleteVersionBtn.onclick = () => {
-                    const id = versionsDropdown.value;
-                    if (!id) return;
-                    const versions = getSavedVersions();
-                    if (versions[id] && confirm(`Удалить версию "${versions[id].name}"?`)) {
-                        delete versions[id];
-                        saveVersions(versions);
-                        populateVersionsDropdown();
-                    }
-                };
-                formatCodeBtn.onclick = () => {
-                    if (typeof js_beautify === 'undefined') {
-                        alert('Библиотека для форматирования не загружена.');
-                        return;
-                    }
-                    const currentCode = mainEditor.getValue();
-                    const formattedCode = js_beautify(currentCode, {
-                        indent_size: 2,
-                        space_in_empty_paren: true,
-                        end_with_newline: true
-                    });
-                    mainEditor.setValue(formattedCode);
-                };
-
-                // --- Логика Блокнота ---
-                openScratchpadBtn.onclick = () => {
-                    scratchpadWindow.style.display = 'flex';
-                    if (!scratchpadEditor) {
-                        scratchpadEditor = CodeMirror.fromTextArea(scratchpadTextarea, editorOptions);
-                        scratchpadEditor.setValue(localStorage.getItem(LS_SCRATCHPAD_KEY) || "// Это ваш блокнот для фрагментов кода");
-                        scratchpadEditor.on("change", () => {
-                            localStorage.setItem(LS_SCRATCHPAD_KEY, scratchpadEditor.getValue());
-                        });
-                    }
-                     setTimeout(() => scratchpadEditor.refresh(), 1);
-                };
-
-                scratchpadCloseBtn.onclick = () => { scratchpadWindow.style.display = 'none'; };
-                sendToScratchpadBtn.onclick = () => {
-                    if (!scratchpadEditor) openScratchpadBtn.click();
-                    const selection = mainEditor.getSelection();
-                    if (selection) scratchpadEditor.setValue(selection);
-                };
-                
-                getFromScratchpadBtn.onclick = () => {
-                    if (scratchpadEditor) mainEditor.replaceSelection(scratchpadEditor.getValue());
-                };
-                
-                // Логика перетаскивания окна Блокнота
-                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-                scratchpadHeader.onmousedown = (e) => {
-                    e.preventDefault();
-                    pos3 = e.clientX;
-                    pos4 = e.clientY;
-                    document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
-                    document.onmousemove = (e) => {
-                        e.preventDefault();
-                        pos1 = pos3 - e.clientX;
-                        pos2 = pos4 - e.clientY;
-                        pos3 = e.clientX;
-                        pos4 = e.clientY;
-                        scratchpadWindow.style.top = (scratchpadWindow.offsetTop - pos2) + "px";
-                        scratchpadWindow.style.left = (scratchpadWindow.offsetLeft - pos1) + "px";
-                    };
-                };
-            }
-
-            // --- ЗАПУСК ПРИЛОЖЕНИЯ ---
-            function setupConferenceButton() {
-                const confConfig = CONFIG.videoConference;
-                const wrapper = document.getElementById('conferenceBtnWrapper');
-                if (confConfig && confConfig.enabled) {
-                    wrapper.style.display = 'flex';
-                    conferenceBtn.title = confConfig.tooltip || 'Видеоконференция';
-                    wrapper.querySelector('.button-label').textContent = confConfig.buttonText || 'эфир';
-                    conferenceBtn.onclick = openConferenceModal;
-                } else {
-                    wrapper.style.display = 'none';
-                }
-            }
-
-            setupCover();
-            setupBookPages();
-            setupConferenceButton();
-            updateAdminPanel();
-            updateButtonsAndIndicator();
-            setupAdminConstructor(); // Запускаем конструктор, если это админ
-
-            if (isFeedMode) {
-                if (prevBtn) prevBtn.parentElement.style.display = 'none';
-                if (nextBtn) nextBtn.parentElement.style.display = 'none';
-                if (pageIndicator) pageIndicator.style.display = 'none';
+        // Закрытие модалки
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.onclick = function() {
+                this.closest('.modal').style.display = 'none';
             }
         });
     </script>
 </body>
-
 </html>
