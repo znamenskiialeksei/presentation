@@ -1458,35 +1458,86 @@
         .cm-custom-blue {
             color: #5599FF !important;
         }
-        
-        /* Стили для карточек товара */
+
+        /* --- НОВЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ТОВАРОВ И СЕТКИ --- */
         .product-grid {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 15px;
-            justify-content: center;
+            margin-top: 15px;
+            padding-bottom: 20px;
         }
+
         .product-card {
-            border: 1px solid #eee;
+            background: #fff;
+            border: 1px solid #ddd;
             border-radius: 8px;
             padding: 10px;
-            width: 100%;
-            max-width: 300px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        .product-buy-btn {
-            display: inline-block;
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .product-card h3 {
+            font-size: 1em;
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        .product-card .price {
+            font-weight: bold;
+            color: #E91E63;
+            margin-bottom: 10px;
+        }
+
+        .buy-btn {
             background-color: #25D366;
             color: white;
-            padding: 8px 16px;
-            text-decoration: none;
+            border: none;
+            padding: 8px 12px;
             border-radius: 5px;
-            margin-top: 10px;
-            font-weight: bold;
+            font-size: 0.9em;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
         }
-        .product-buy-btn:hover {
+
+        .buy-btn:hover {
             background-color: #128C7E;
+        }
+
+        .sub-page-details {
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .sub-page-details summary {
+            background-color: #fafafa;
+            padding: 10px 15px;
+            font-weight: 500;
+            font-size: 1em;
+        }
+        
+        .sub-page-details[open] {
+            padding-bottom: 15px;
         }
     </style>
 </head>
@@ -1738,15 +1789,18 @@
             pages: [
                 
                 //==============================================================//
-                //======================= СТРАНИЦА 1 ===========================//
+                //=========== СТРАНИЦА 1: ОБО МНЕ (С ВИДЕО) ====================//
                 //==============================================================//
                 {
                     // true - страница будет показана, false - страница будет скрыта из маршрута.
                     published: true,
 
-                    // Основной текстовый контент страницы. Можно использовать HTML-теги для форматирования (<h2>, <p>, <strong> и т.д.).
+                    // Основной текстовый контент страницы. 
                     text: `<h2>Обо мне</h2>
-                    <video src="https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/oblogka.mp4" class="embedded-media align-left size-small" autoplay loop muted playsinline></video>
+                    <video autoplay loop muted playsinline class="embedded-media size-small align-left" style="border-radius: 8px;">
+                        <source src="https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/oblogka.mp4" type="video/mp4">
+                    </video>
+                    
                     <p>Приветствую! Меня зовут <strong>Василиса Знаменская</strong> - я дизайнер.</p>
                     <p>Я создаю аксессуары для женщин, которые знают: самый важный человек — это мы сами. Мои изделия — это не просто декор, это личный артефакт вашей внутренней силы и безусловной любви к себе.</p>
                     <p>Моя миссия двойная:</p>
@@ -1757,16 +1811,8 @@
                     <img src="https://images.unsplash.com/photo-1596913746726-8c4391b1574d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" class="embedded-media size-medium" alt="Фото мастера">
                     <p>Моя миссия — показать, что создавать шедевры может каждый. Именно поэтому я не только делаю украшения на заказ, но и обучаю этому искусству.</p>`,
                     
-                    // Временная метка (в секундах) в основном аудиофайле, когда диктор заканчивает читать текст этой страницы.
-                    // Плеер автоматически переключится на следующую страницу по достижении этой метки.
                     narrationEndTime: 33,
-
-                    // true: в режиме "ленты" эта страница будет сворачиваемым блоком (аккордеоном).
-                    // false: страница всегда будет полностью развернута.
                     collapsible: false,
-
-                    // "auto" - высота страницы подстроится под контент.
-                    // Можно задать фиксированную высоту, например, '600px'.
                     customHeight: 'auto',
 
                     // Массив кастомных выпадающих меню, которые можно разместить прямо на этой странице.
@@ -1790,7 +1836,7 @@
                 },
 
                 //==============================================================//
-                //=========== СТРАНИЦА 2: ВИТРИНА (ЗАГОЛОВОК) ==================//
+                //=========== СТРАНИЦА 2: В НАЛИЧИИ (5 ПОД-СТРАНИЦ) ============//
                 //==============================================================//
                 {
                     published: true,
@@ -1798,164 +1844,157 @@
                     collapsible: true,
                     customHeight: 'auto',
                     text: `<h2>Украшения и аксессуары в наличии</h2>
-                    <p>Добро пожаловать в мой каталог. Здесь представлены мои лучшие работы. Нажмите на карточки ниже, чтобы увидеть детали.</p>
-                    <p>Коллекция "Фейерверк" — это взрыв блеска и эмоций. Идеально подходит как для вечернего выхода, так и для того, чтобы добавить искру в повседневный образ.</p>`,
+                    <p>Здесь вы можете выбрать готовые изделия. Нажмите на раздел, чтобы увидеть товары.</p>
+                    
+                    <details class="sub-page-details"><summary>Кольца "Фейерверк"</summary>
+                        <div class="product-grid">
+                            <div class="product-card" onclick="window.showProductDetails('Золотое кольцо', '3500р', 'Роскошное кольцо с кристаллами Swarovski.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150" alt="Товар">
+                                <h3>Золотое кольцо</h3><p class="price">3500р</p>
+                                <button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('Золотое кольцо')">Заказать</button>
+                            </div>
+                            <div class="product-card" onclick="window.showProductDetails('Серебряное кольцо', '3000р', 'Элегантность в каждой детали.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150" alt="Товар">
+                                <h3>Серебряное кольцо</h3><p class="price">3000р</p>
+                                <button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('Серебряное кольцо')">Заказать</button>
+                            </div>
+                            <div class="product-card" onclick="window.showProductDetails('Кольцо Рубин', '4000р', 'Яркий акцент для вашего образа.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150" alt="Товар">
+                                <h3>Кольцо Рубин</h3><p class="price">4000р</p>
+                                <button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('Кольцо Рубин')">Заказать</button>
+                            </div>
+                            <div class="product-card" onclick="window.showProductDetails('Кольцо Изумруд', '4200р', 'Глубокий зеленый цвет.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150" alt="Товар">
+                                <h3>Кольцо Изумруд</h3><p class="price">4200р</p>
+                                <button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('Кольцо Изумруд')">Заказать</button>
+                            </div>
+                            <div class="product-card" onclick="window.showProductDetails('Кольцо Сапфир', '4500р', 'Королевский синий.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150" alt="Товар">
+                                <h3>Кольцо Сапфир</h3><p class="price">4500р</p>
+                                <button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('Кольцо Сапфир')">Заказать</button>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Серьги Вечерние</summary>
+                        <div class="product-grid">
+                             <div class="product-card" onclick="window.showProductDetails('Серьги Длинные', '2500р', 'Идеальны для вечера.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150" alt="Товар"><h3>Серьги Длинные</h3><p class="price">2500р</p><button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('Серьги Длинные')">Заказать</button>
+                            </div>
+                            <div class="product-card" onclick="window.showProductDetails('Серьги Пусеты', '1500р', 'На каждый день.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150" alt="Товар"><h3>Серьги Пусеты</h3><p class="price">1500р</p><button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('Серьги Пусеты')">Заказать</button>
+                            </div>
+                            <div class="product-card" onclick="window.showProductDetails('Серьги Кольца', '2000р', 'Классика жанра.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150" alt="Товар"><h3>Серьги Кольца</h3><p class="price">2000р</p><button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('Серьги Кольца')">Заказать</button>
+                            </div>
+                            <div class="product-card" onclick="window.showProductDetails('Серьги Капли', '2200р', 'Утонченный стиль.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150" alt="Товар"><h3>Серьги Капли</h3><p class="price">2200р</p><button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('Серьги Капли')">Заказать</button>
+                            </div>
+                            <div class="product-card" onclick="window.showProductDetails('Серьги Геометрия', '2400р', 'Современный дизайн.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150" alt="Товар"><h3>Серьги Геометрия</h3><p class="price">2400р</p><button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('Серьги Геометрия')">Заказать</button>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Браслеты</summary>
+                        <div class="product-grid">
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Браслет 1</h3><p class="price">1000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Браслет 2</h3><p class="price">1000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Браслет 3</h3><p class="price">1000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Браслет 4</h3><p class="price">1000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Браслет 5</h3><p class="price">1000р</p><button class="buy-btn">Заказать</button></div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Колье и подвески</summary>
+                        <div class="product-grid">
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Колье 1</h3><p class="price">5000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Колье 2</h3><p class="price">5000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Колье 3</h3><p class="price">5000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Колье 4</h3><p class="price">5000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Колье 5</h3><p class="price">5000р</p><button class="buy-btn">Заказать</button></div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Комплекты</summary>
+                        <div class="product-grid">
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Комплект 1</h3><p class="price">9000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Комплект 2</h3><p class="price">9000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Комплект 3</h3><p class="price">9000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Комплект 4</h3><p class="price">9000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Комплект 5</h3><p class="price">9000р</p><button class="buy-btn">Заказать</button></div>
+                        </div>
+                    </details>`,
                     narrationEndTime: 91,
                 },
-                
-                // --- Подстраница 2.1: Товар 1 ---
+
+                //==============================================================//
+                //=========== СТРАНИЦА 3: МАСТЕР-КЛАССЫ (5 ПОД-СТРАНИЦ) ========//
+                //==============================================================//
                 {
                     published: true,
-                    collapsedOnLoad: true,
                     collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>Кольцо "Фейерверк"</h3>
-                    <img src="https://images.unsplash.com/photo-1599643478518-17488fbbcd75?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: 35 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Хочу%20заказать%20Кольцо%20Фейерверк" target="_blank" class="product-buy-btn">Заказать в 1 клик</a>
-                    <p>Нажмите на кнопку "Галерея" ниже для просмотра детальных фото и видео.</p>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{
-                        type: 'carousel',
-                        buttonText: 'Галерея и Видео',
-                        headerText: 'Кольцо "Фейерверк"',
-                        images: [{ url: 'https://images.unsplash.com/photo-1599643478518-17488fbbcd75?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Фото 1', width: 800, height: 600 }]
-                    }]
-                },
-                // --- Подстраница 2.2: Товар 2 ---
-                {
-                    published: true,
                     collapsedOnLoad: true,
-                    collapsible: true,
                     customHeight: 'auto',
-                    text: `<h3>Серьги "Вечерний блеск"</h3>
-                    <img src="https://images.unsplash.com/photo-1617038224558-2839549c15ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: 45 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Хочу%20заказать%20Серьги" target="_blank" class="product-buy-btn">Заказать в 1 клик</a>`,
+                    text: `<h2>Обучение и мастер-классы</h2>
+                    <p>Научитесь создавать шедевры своими руками.</p>
+                    
+                    <details class="sub-page-details"><summary>Для начинающих</summary>
+                        <div class="product-grid">
+                            <div class="product-card" onclick="window.showProductDetails('МК Основы', '1000р', 'Базовые техники.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150"><h3>МК Основы</h3><p class="price">1000р</p><button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('МК Основы')">Купить</button>
+                            </div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Браслет</h3><p class="price">1200р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Серьги</h3><p class="price">1200р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Кольцо</h3><p class="price">1200р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Подвеска</h3><p class="price">1200р</p><button class="buy-btn">Купить</button></div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Продвинутый уровень</summary>
+                        <div class="product-grid">
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Сложный</h3><p class="price">2000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Объем</h3><p class="price">2000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Сетка</h3><p class="price">2000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Камни</h3><p class="price">2000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Дизайн</h3><p class="price">2000р</p><button class="buy-btn">Купить</button></div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Про бизнес</summary>
+                        <div class="product-grid">
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Продажи</h3><p class="price">5000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Фото</h3><p class="price">3000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Бренд</h3><p class="price">4000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Инста</h3><p class="price">3000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>МК Тексты</h3><p class="price">2000р</p><button class="buy-btn">Купить</button></div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Индивидуальное обучение</summary>
+                        <div class="product-grid">
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Наставничество</h3><p class="price">15000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Разбор</h3><p class="price">5000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Консультация</h3><p class="price">3000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Урок Live</h3><p class="price">4000р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Аудит</h3><p class="price">3000р</p><button class="buy-btn">Купить</button></div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Материалы</summary>
+                        <div class="product-grid">
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Набор 1</h3><p class="price">1500р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Набор 2</h3><p class="price">1500р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Набор 3</h3><p class="price">1500р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Набор 4</h3><p class="price">1500р</p><button class="buy-btn">Купить</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Набор 5</h3><p class="price">1500р</p><button class="buy-btn">Купить</button></div>
+                        </div>
+                    </details>`,
                     narrationEndTime: 0,
-                    extraMedia: [{ type: 'carousel', buttonText: 'Подробнее', headerText: 'Серьги', images: [{ url: 'https://images.unsplash.com/photo-1617038224558-2839549c15ab', caption: 'Фото 1', width: 800, height: 600 }] }]
-                },
-                // --- Подстраница 2.3: Товар 3 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>Колье "Жемчужная нить"</h3>
-                    <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: 60 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Хочу%20заказать%20Колье" target="_blank" class="product-buy-btn">Заказать в 1 клик</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'carousel', buttonText: 'Подробнее', headerText: 'Колье', images: [{ url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908', caption: 'Фото 1', width: 800, height: 600 }] }]
-                },
-                // --- Подстраница 2.4: Товар 4 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>Браслет "Шарм"</h3>
-                    <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: 30 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Хочу%20заказать%20Браслет" target="_blank" class="product-buy-btn">Заказать в 1 клик</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'carousel', buttonText: 'Подробнее', headerText: 'Браслет', images: [{ url: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a', caption: 'Фото 1', width: 800, height: 600 }] }]
-                },
-                // --- Подстраница 2.5: Товар 5 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>Комплект "Свадебный"</h3>
-                    <img src="https://images.unsplash.com/photo-1608042314453-ae338d80c427?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: 120 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Хочу%20заказать%20Комплект" target="_blank" class="product-buy-btn">Заказать в 1 клик</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'carousel', buttonText: 'Подробнее', headerText: 'Комплект', images: [{ url: 'https://images.unsplash.com/photo-1608042314453-ae338d80c427', caption: 'Фото 1', width: 800, height: 600 }] }]
                 },
 
                 //==============================================================//
-                //=========== СТРАНИЦА 3: ОБУЧЕНИЕ (ЗАГОЛОВОК) =================//
-                //==============================================================//
-                {
-                    published: true,
-                    collapsible: true,
-                    collapsedOnLoad: true,
-                    customHeight: 'auto',
-                    text: `<h2>Обучение и Мастер-классы</h2>
-                    <p>Хотите создать свой первый хит продаж? Я приглашаю вас на мои авторские курсы.</p>
-                    <p><strong>Что вы получите:</strong> Пошаговые видео-уроки, список материалов, секреты продаж.</p>`,
-                    narrationEndTime: 0,
-                },
-                // --- Подстраница 3.1: МК 1 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>МК "Кольцо Фейерверк"</h3>
-                    <img src="https://images.unsplash.com/photo-1599643478518-17488fbbcd75?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: 50 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Хочу%20купить%20МК%20Фейерверк" target="_blank" class="product-buy-btn">Заказать в 1 клик</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'video', buttonText: 'Промо видео', url: 'https://pixabay.com/videos/download/video-40030_medium.mp4', headerText: 'О курсе' }]
-                },
-                // --- Подстраница 3.2: МК 2 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>МК "Серьги-Кисти"</h3>
-                    <img src="https://images.unsplash.com/photo-1589128777076-29a50278783e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: 40 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Хочу%20купить%20МК%20Серьги" target="_blank" class="product-buy-btn">Заказать в 1 клик</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'text', buttonText: 'Программа', url: '#', headerText: 'Программа курса' }]
-                },
-                // --- Подстраница 3.3: МК 3 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>МК "Брошь-Жук"</h3>
-                    <img src="https://images.unsplash.com/photo-1602752250015-6cb3442353ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: 55 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Хочу%20купить%20МК%20Брошь" target="_blank" class="product-buy-btn">Заказать в 1 клик</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'text', buttonText: 'Детали', url: '#', headerText: 'О курсе' }]
-                },
-                // --- Подстраница 3.4: МК 4 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>Курс "Бизнес на украшениях"</h3>
-                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: 150 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Хочу%20купить%20Курс%20Бизнес" target="_blank" class="product-buy-btn">Заказать в 1 клик</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'text', buttonText: 'Программа', url: '#', headerText: 'Программа курса' }]
-                },
-                // --- Подстраница 3.5: МК 5 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>МК "Колье-Чокер"</h3>
-                    <img src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: 35 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Хочу%20купить%20МК%20Чокер" target="_blank" class="product-buy-btn">Заказать в 1 клик</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'text', buttonText: 'Детали', url: '#', headerText: 'О курсе' }]
-                },
-
-                //==============================================================//
-                //=========== СТРАНИЦА 4: ПОД ЗАКАЗ (ЗАГОЛОВОК) ================//
+                //=========== СТРАНИЦА 4: ПОД ЗАКАЗ (5 ПОД-СТРАНИЦ) ============//
                 //==============================================================//
                 {
                     published: true,
@@ -1963,98 +2002,87 @@
                     collapsedOnLoad: true,
                     customHeight: 'auto',
                     text: `<h2>Украшения и аксессуары под заказ</h2>
-                    <p>Уникальные изделия, созданные специально для вас. Срок изготовления: 5-7 дней.</p>`,
-                    narrationEndTime: 0,
-                },
-                // --- Подстраница 4.1: Заказ 1 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>Индивидуальный комплект</h3>
-                    <img src="https://images.unsplash.com/photo-1576158187530-986d808d722f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: от 100 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Интересует%20заказ%20комплекта" target="_blank" class="product-buy-btn">Обсудить заказ</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'carousel', buttonText: 'Примеры', headerText: 'Примеры работ', images: [{ url: 'https://images.unsplash.com/photo-1576158187530-986d808d722f', caption: 'Фото 1', width: 800, height: 600 }] }]
-                },
-                // --- Подстраница 4.2: Заказ 2 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>Свадебная диадема</h3>
-                    <img src="https://images.unsplash.com/photo-1539656827727-8a39efbc61f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: от 80 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Интересует%20заказ%20диадемы" target="_blank" class="product-buy-btn">Обсудить заказ</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'carousel', buttonText: 'Примеры', headerText: 'Примеры работ', images: [{ url: 'https://images.unsplash.com/photo-1539656827727-8a39efbc61f3', caption: 'Фото 1', width: 800, height: 600 }] }]
-                },
-                // --- Подстраница 4.3: Заказ 3 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>Вечерняя сумочка</h3>
-                    <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: от 150 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Интересует%20заказ%20сумочки" target="_blank" class="product-buy-btn">Обсудить заказ</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'carousel', buttonText: 'Примеры', headerText: 'Примеры работ', images: [{ url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3', caption: 'Фото 1', width: 800, height: 600 }] }]
-                },
-                // --- Подстраница 4.4: Заказ 4 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>Брошь по эскизу</h3>
-                    <img src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: от 40 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Интересует%20заказ%20броши" target="_blank" class="product-buy-btn">Обсудить заказ</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'carousel', buttonText: 'Примеры', headerText: 'Примеры работ', images: [{ url: 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed', caption: 'Фото 1', width: 800, height: 600 }] }]
-                },
-                // --- Подстраница 4.5: Заказ 5 ---
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>Эксклюзивное колье</h3>
-                    <img src="https://images.unsplash.com/photo-1590548784585-643d2b9f2925?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="embedded-media size-medium">
-                    <p>Цена: от 200 EUR</p>
-                    <a href="https://wa.me/9213047892?text=Интересует%20эксклюзив" target="_blank" class="product-buy-btn">Обсудить заказ</a>`,
-                    narrationEndTime: 0,
-                    extraMedia: [{ type: 'carousel', buttonText: 'Примеры', headerText: 'Примеры работ', images: [{ url: 'https://images.unsplash.com/photo-1590548784585-643d2b9f2925', caption: 'Фото 1', width: 800, height: 600 }] }]
+                    <p>Эксклюзивные изделия, созданные специально для вас.</p>
+                    
+                    <details class="sub-page-details"><summary>Свадебная коллекция</summary>
+                        <div class="product-grid">
+                            <div class="product-card" onclick="window.showProductDetails('Диадема', '10000р', 'Для невесты.', 'https://via.placeholder.com/300x200', '')">
+                                <img src="https://via.placeholder.com/150"><h3>Диадема</h3><p class="price">10000р</p><button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('Диадема')">Заказать</button>
+                            </div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Гребень</h3><p class="price">5000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Шпильки</h3><p class="price">3000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Колье Невесты</h3><p class="price">8000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Серьги Невесты</h3><p class="price">4000р</p><button class="buy-btn">Заказать</button></div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Вечерние сумочки</summary>
+                        <div class="product-grid">
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Клатч 1</h3><p class="price">12000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Клатч 2</h3><p class="price">12000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Клатч 3</h3><p class="price">12000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Сумочка Бисер</h3><p class="price">15000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Мини-сумочка</h3><p class="price">8000р</p><button class="buy-btn">Заказать</button></div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Броши</summary>
+                        <div class="product-grid">
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Брошь Жук</h3><p class="price">4000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Брошь Цветок</h3><p class="price">4000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Брошь Птица</h3><p class="price">4000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Брошь Бант</h3><p class="price">4000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Брошь Абстракция</h3><p class="price">4000р</p><button class="buy-btn">Заказать</button></div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Пояса</summary>
+                        <div class="product-grid">
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Пояс 1</h3><p class="price">7000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Пояс 2</h3><p class="price">7000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Пояс 3</h3><p class="price">7000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Пояс 4</h3><p class="price">7000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Пояс 5</h3><p class="price">7000р</p><button class="buy-btn">Заказать</button></div>
+                        </div>
+                    </details>
+
+                    <details class="sub-page-details"><summary>Индивидуальный дизайн</summary>
+                        <div class="product-grid">
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Эскиз</h3><p class="price">1000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Подбор камней</h3><p class="price">Бесплатно</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Реставрация</h3><p class="price">от 2000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Переделка</h3><p class="price">от 3000р</p><button class="buy-btn">Заказать</button></div>
+                            <div class="product-card"><img src="https://via.placeholder.com/150"><h3>Срочный заказ</h3><p class="price">+30%</p><button class="buy-btn">Заказать</button></div>
+                        </div>
+                    </details>`,
+                    narrationEndTime: 260,
                 },
 
                 //==============================================================//
-                //=========== СТРАНИЦА 5: ОБРАТНАЯ СВЯЗЬ / КАТАЛОГ =============//
+                //======================= СТРАНИЦА 5: КОНТАКТЫ И ФИДБЕК ========//
                 //==============================================================//
                 {
                     published: true,
                     collapsible: true,
                     collapsedOnLoad: false,
                     customHeight: 'auto',
-                    text: `<h2>Обратная связь и Общий каталог</h2>
-                    <p>Если вы не нашли то, что искали, посмотрите наш полный каталог.</p>
-                    <p>Вы можете выбрать любое изделие и написать нам для уточнения деталей.</p>
+                    text: `<h2>Связь и Обратная связь</h2>
+                    <p>Остались вопросы? Хотите заказать украшение или записаться на курс? Свяжитесь со мной удобным способом.</p>
+                    <p>Укажите ссылку на товар из каталога, который вас заинтересовал, в сообщении ниже.</p>
                     
-                    <div style="display: flex; flex-direction: column; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
-                        <a href="https://wa.me/9213047892?text=Здравствуйте!%20Хочу%20посмотреть%20полный%20каталог" target="_blank" style="text-decoration: none; background: #25D366; color: white; padding: 15px 20px; border-radius: 5px; text-align: center; font-weight: bold;">
-                            Запросить полный каталог в WhatsApp
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
+                        <a href="https://t.me/@Vasilisaznamenskaya" target="_blank" style="text-decoration: none; background: #0088cc; color: white; padding: 10px 20px; border-radius: 5px; display: flex; align-items: center; gap: 5px;">
+                            Telegram Канал
                         </a>
-                        <a href="https://t.me/@Vasilisaznamenskaya" target="_blank" style="text-decoration: none; background: #0088cc; color: white; padding: 15px 20px; border-radius: 5px; text-align: center; font-weight: bold;">
-                            Написать в Telegram
-                        </a>
-                        <a href="https://youtube.com/yourchannel" target="_blank" style="text-decoration: none; background: #FF0000; color: white; padding: 15px 20px; border-radius: 5px; text-align: center; font-weight: bold;">
+                        <a href="https://youtube.com/yourchannel" target="_blank" style="text-decoration: none; background: #FF0000; color: white; padding: 10px 20px; border-radius: 5px; display: flex; align-items: center; gap: 5px;">
                             YouTube Канал
                         </a>
-                    </div>`,
+                    </div>
+                    
+                    <hr>
+                    <p><strong>Форма обратной связи:</strong></p>
+                    <textarea placeholder="Вставьте ссылку на товар или ваш вопрос..." style="width: 100%; height: 100px; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
+                    <button style="background: #333; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-top: 10px; cursor: pointer;" onclick="alert('Спасибо за сообщение! Мы свяжемся с вами.')">Отправить</button>`,
                     narrationEndTime: 0,
                 },
             ]
@@ -2085,7 +2113,6 @@
                 const scriptContent = scriptTag.innerHTML;
                 const startIndex = scriptContent.indexOf('/*--CONFIG_START--*/');
                 const endIndex = scriptContent.indexOf('/*--CONFIG_END--*/');
-                
                 if (startIndex === -1 || endIndex === -1) {
                     throw new Error("Маркеры /*--CONFIG_START--*/ или /*--CONFIG_END--*/ не найдены.");
                 }
@@ -2094,7 +2121,6 @@
                 const objectStartIndex = rawConfigBlock.indexOf('{');
                 const objectEndIndex = rawConfigBlock.lastIndexOf('}');
                 defaultConfigString = rawConfigBlock.substring(objectStartIndex, objectEndIndex + 1);
-
             } catch (e) {
                 console.error("Ошибка извлечения конфигурации из тега <script>:", e);
                 alert("Не удалось извлечь конфигурацию по умолчанию из HTML.");
@@ -2224,7 +2250,6 @@
                 });
             }
             const tooltipBox = document.getElementById('tooltip-box');
-
             function showTooltip(element, text) {
                 if (!text) return;
                 clearTimeout(tooltipTimeout);
@@ -2433,10 +2458,8 @@
             const carouselNextBtn = modalCarousel.querySelector('.next');
             let currentCarouselImages = [];
             let currentCarouselIndex = 0;
-
             function openConferenceModal() {
                 if (jitsiApi) return;
-
                 // --- БЛОК УВЕДОМЛЕНИЯ ---
                 if (CONFIG.notificationScriptUrl && CONFIG.notificationScriptUrl.startsWith('https')) {
                     const payload = {
@@ -2459,7 +2482,6 @@
                 mediaModal.querySelector('.modal-header').textContent = 'Присоединение к видеоконференции...';
                 mediaModal.querySelector('.modal-footer').textContent = 'Вы можете включить/выключить камеру и микрофон внизу экрана.';
                 mediaModal.style.display = 'flex';
-
                 setTimeout(() => {
                     const options = {
                         roomName: CONFIG.videoConference.roomName || 'MarmarisYachtVasilisaTestRoom',
@@ -2499,7 +2521,7 @@
                     }
                 });
                 mediaModal.querySelector('.modal-header').textContent = media.headerText || '';
-                mediaModal.querySelector('.modal-footer').textContent = '';
+                mediaModal.querySelector('.modal-footer').textContent = media.footerText || '';
 
                 if (media.type === 'carousel' && media.images && media.images.length > 0) {
                     currentCarouselImages = media.images;
@@ -2543,7 +2565,6 @@
                         showCarouselSlide(0);
                     }, 50);
                 } else {
-                    mediaModal.querySelector('.modal-footer').textContent = media.footerText || '';
                     let contentElement;
                     if (media.type === 'iframe') {
                         if (media.width && media.height) {
@@ -2592,7 +2613,12 @@
                     if (contentElement) {
                         if (media.type === 'text') {
                             contentElement.innerHTML = '<em>Загрузка...</em>';
-                            fetch(media.url).then(res => res.text()).then(text => contentElement.innerHTML = text).catch(err => contentElement.innerHTML = '<strong>Ошибка загрузки.</strong>');
+                            // Если передан HTML контент напрямую (наш случай для товаров)
+                            if (media.htmlContent) {
+                                contentElement.innerHTML = media.htmlContent;
+                            } else {
+                                fetch(media.url).then(res => res.text()).then(text => contentElement.innerHTML = text).catch(err => contentElement.innerHTML = '<strong>Ошибка загрузки.</strong>');
+                            }
                         } else {
                             contentElement.src = media.url;
                         }
@@ -2606,7 +2632,6 @@
             }
             const bookingModal = document.getElementById('bookingModal');
             const bookingFrame = document.getElementById('bookingFrame');
-
             function closeModal(modal) {
                 modal.style.display = 'none';
                 if (modal.id === 'mediaModal') {
@@ -2654,7 +2679,6 @@
                     wrapper.style.height = (event.data.height + padding + 5) + 'px';
                 }
             });
-
             function showPage(pageNumber) {
                 if (pageNumber < 1 || pageNumber > publishedPages.length) return;
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -2738,7 +2762,6 @@
                     showPage(1);
                 }
             };
-
             nextBtn.addEventListener('click', () => {
                 if (!isFeedMode) {
                     if (isCoverActive) {
@@ -2769,7 +2792,6 @@
                     }
                 }
             });
-
             audioPlayer.addEventListener('timeupdate', () => {
                 if (isCoverActive) return;
                 const isAutoPilot = (isFeedMode && isNarratorModeActive) || (!isFeedMode && CONFIG.isContinuousPlayback);
@@ -2798,15 +2820,12 @@
                     }
                 }
             });
-            
-             // --- УЛУЧШЕННАЯ ЛОГИКА КОНСТРУКТОРА ДЛЯ АДМИНА ---
+            // --- УЛУЧШЕННАЯ ЛОГИКА КОНСТРУКТОРА ДЛЯ АДМИНА ---
             function setupAdminConstructor() {
                 if (!isAdmin) return;
-
                 let mainEditor, scratchpadEditor;
                 const LS_VERSIONS_KEY = 'configVersions';
                 const LS_SCRATCHPAD_KEY = 'scratchpadContent';
-
                 // --- Элементы основного редактора ---
                 const editBtn = document.getElementById('edit-config-btn');
                 const modal = document.getElementById('admin-config-modal');
@@ -2856,12 +2875,10 @@
                     foldGutter: true,
                     gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers"]
                 };
-
                 // --- НОВАЯ ФУНКЦИЯ ДЛЯ УМНОЙ ПОДСВЕТКИ ---
                 function highlightSpecificValues(editor) {
                     // Очищаем предыдущие маркеры, чтобы избежать дублирования
                     editor.getAllMarks().forEach(mark => mark.clear());
-                    
                     // Ключи, значения которых мы хотим подсветить
                     const keysToHighlight = ['"tooltip"', '"text"', '"roomName"', '"name"'];
                     // Создаем регулярное выражение для поиска строк вида "ключ": "значение"
@@ -2907,8 +2924,7 @@
                     }
                     
                     // Устанавливаем актуальное содержимое в редактор
-                    mainEditor.setValue(editorContent); 
-                    
+                    mainEditor.setValue(editorContent);
                     populateVersionsDropdown();
                     setTimeout(() => {
                         mainEditor.refresh();
@@ -2926,13 +2942,12 @@
                         window.location.reload();
                     } catch (e) { 
                         console.error("Ошибка синтаксиса в конфигурации:", e);
-                        alert('ОШИБКА СИНТАКСИСА! \n\nНе удалось сохранить конфигурацию. Проверьте консоль (F12) для получения подробной информации об ошибке.'); 
+                        alert('ОШИБКА СИНТАКСИСА! \n\nНе удалось сохранить конфигурацию. Проверьте консоль (F12) для получения подробной информации об ошибке.');
                     }
                 };
                 copyBtn.onclick = () => navigator.clipboard.writeText(mainEditor.getValue()).then(() => alert('Код скопирован.'));
                 undoBtn.onclick = () => mainEditor.undo();
                 redoBtn.onclick = () => mainEditor.redo();
-
                 saveAsBtn.onclick = () => {
                     const name = prompt("Название версии:", "Новая конфигурация");
                     if (!name) return;
@@ -2944,7 +2959,6 @@
                     populateVersionsDropdown();
                     versionsDropdown.value = newId;
                 };
-
                 loadVersionBtn.onclick = () => {
                     const id = versionsDropdown.value;
                     if (!id) return;
@@ -2954,7 +2968,6 @@
                         highlightSpecificValues(mainEditor);
                     }
                 };
-
                 deleteVersionBtn.onclick = () => {
                     const id = versionsDropdown.value;
                     if (!id) return;
@@ -2965,7 +2978,6 @@
                         populateVersionsDropdown();
                     }
                 };
-                
                 formatCodeBtn.onclick = () => {
                     if (typeof js_beautify === 'undefined') {
                         alert('Библиотека для форматирования не загружена.');
@@ -2994,7 +3006,6 @@
                 };
 
                 scratchpadCloseBtn.onclick = () => { scratchpadWindow.style.display = 'none'; };
-                
                 sendToScratchpadBtn.onclick = () => {
                     if (!scratchpadEditor) openScratchpadBtn.click();
                     const selection = mainEditor.getSelection();
@@ -3037,6 +3048,45 @@
                     wrapper.style.display = 'none';
                 }
             }
+
+            // --- НОВЫЕ ФУНКЦИИ ДЛЯ МАГАЗИНА ---
+            window.orderOneClick = function(productName) {
+                const message = encodeURIComponent('Здравствуйте! Хочу заказать: ' + productName);
+                window.open('https://wa.me/9213047892?text=' + message, '_blank');
+            };
+
+            window.showProductDetails = function(title, price, description, imageUrl, videoUrl) {
+                const modalHeader = document.querySelector('#mediaModal .modal-header');
+                const modalFooter = document.querySelector('#mediaModal .modal-footer');
+                
+                let content = `
+                    <div style="text-align: center;">
+                        <img src="${imageUrl || 'https://via.placeholder.com/300x200'}" style="max-width: 100%; border-radius: 8px; margin-bottom: 15px;">
+                        <h2 style="color: #333; margin-bottom: 10px;">${title}</h2>
+                        <h3 style="color: #E91E63; margin-bottom: 15px;">${price}</h3>
+                        <p style="text-align: left; line-height: 1.5; margin-bottom: 20px;">${description}</p>
+                `;
+                
+                if (videoUrl) {
+                    content += `
+                        <div style="margin-bottom: 20px;">
+                            <strong>Видео обзор:</strong>
+                            <iframe src="${videoUrl}" style="width: 100%; height: 200px; border: none; border-radius: 8px; margin-top: 10px;"></iframe>
+                        </div>
+                    `;
+                }
+                
+                content += `
+                        <button onclick="window.orderOneClick('${title}')" style="background: #25D366; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-size: 1.1em; cursor: pointer; width: 100%;">Заказать сейчас</button>
+                    </div>
+                `;
+
+                openMediaModal({
+                    type: 'text',
+                    headerText: 'Детали товара',
+                    htmlContent: content
+                });
+            };
 
             setupCover();
             setupBookPages();
