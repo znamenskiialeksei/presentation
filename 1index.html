@@ -1557,6 +1557,44 @@
         .sub-page-details[open] {
             padding-bottom: 15px;
         }
+
+        /* --- СТИЛИ ДЛЯ ГАЛЕРЕИ В МОДАЛЬНОМ ОКНЕ ТОВАРА --- */
+        .product-gallery-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 10px 0;
+            margin-top: 20px;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+
+        .product-gallery-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .product-gallery-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        .product-gallery-item {
+            height: 150px;
+            width: auto;
+            border-radius: 4px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            object-fit: contain;
+            background: #f9f9f9;
+        }
+
+        .product-gallery-video {
+            height: 150px;
+            width: 260px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            background: #000;
+        }
     </style>
 </head>
 
@@ -1688,13 +1726,15 @@
                             const safeDesc = encodeURIComponent(item.description || '');
                             const safeImage = item.image || 'https://via.placeholder.com/300x200';
                             const safeVideo = item.video || '';
+                            // Кодируем дополнительные медиа материалы (массив) в JSON строку
+                            const safeMedia = item.media ? encodeURIComponent(JSON.stringify(item.media)) : '';
 
                             html += `
-                            <div class="product-card" onclick="window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}')">
+                            <div class="product-card" onclick="window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}', '${safeMedia}')">
                                 <img src="${safeImage}" alt="${safeTitle}">
                                 <h3>${safeTitle}</h3>
                                 <p class="price">${safePrice}</p>
-                                <button class="desc-btn" onclick="event.stopPropagation(); window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}')">Описание</button>
+                                <button class="desc-btn" onclick="event.stopPropagation(); window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}', '${safeMedia}')">Описание</button>
                                 <button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('${jsSafeTitle}')">Заказать</button>
                             </div>`;
                         });
@@ -1976,6 +2016,14 @@
                                         currency: "р",
                                         image: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/Katalog/Колье «Геометрия Чувств»/Колье «Геометрия Чувств».jpg",
                                         video: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/Katalog/Колье «Геометрия Чувств»/Колье «Геометрия Чувств».mp4",
+                                        // --- ПРИМЕР ДОБАВЛЕНИЯ ГАЛЕРЕИ В КАРТОЧКУ ---
+                                        media: [
+                                            { type: 'photo', url: 'https://via.placeholder.com/300x200/FF0000/FFFFFF?text=Photo+1' },
+                                            { type: 'photo', url: 'https://via.placeholder.com/300x200/00FF00/FFFFFF?text=Photo+2' },
+                                            { type: 'video', url: 'https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/oblogka.mp4' },
+                                            { type: 'photo', url: 'https://via.placeholder.com/300x200/0000FF/FFFFFF?text=Photo+3' }
+                                        ],
+                                        // --------------------------------------------
                                         description: `Это украшение я создала для тех, кто не ищет компромиссов между роскошью и дерзостью. Я взяла прямоугольный жемчуг — самую неклассическую его форму — и окрасила в глубокий, жемчужно-серый цвет. 
                                         Я добавила цветные акценты, чтобы показать: вы не обязаны быть "идеальной". Вы можете быть разной, но всегда — безупречной.
                                         Это колье создано для тех, кто любит дерзкую элегантность. Оно не про нежность. Оно про характер.
@@ -3160,7 +3208,7 @@
                 window.open('https://wa.me/79213047892?text=' + message, '_blank');
             };
 
-            window.showProductDetails = function(title, price, description, imageUrl, videoUrl) {
+            window.showProductDetails = function(title, price, description, imageUrl, videoUrl, mediaJson) {
                 // 1. Раскодируем описание обратно в текст
                 let decodedDesc = decodeURIComponent(description);
                 
@@ -3178,6 +3226,7 @@
                         <p style="text-align: left; line-height: 1.5; margin-bottom: 20px;">${decodedDesc}</p>
                 `;
                 
+                // Если есть отдельное главное видео, добавляем его
                 if (videoUrl) {
                     content += `
                         <div style="margin-bottom: 20px;">
@@ -3186,6 +3235,37 @@
                         </div>
                     `;
                 }
+
+                // --- НОВАЯ ЛОГИКА: ОБРАБОТКА МАССИВА МЕДИА (ФОТО И ВИДЕО) ---
+                if (mediaJson && mediaJson !== 'undefined') {
+                    try {
+                        const mediaArray = JSON.parse(decodeURIComponent(mediaJson));
+                        if (Array.isArray(mediaArray) && mediaArray.length > 0) {
+                            content += `<div style="text-align: left; margin-top: 15px;"><strong>Галерея:</strong></div>`;
+                            content += `<div class="product-gallery-container">`;
+                            
+                            mediaArray.forEach(item => {
+                                if (item.type === 'photo') {
+                                    content += `<img src="${item.url}" class="product-gallery-item" alt="Фото">`;
+                                } else if (item.type === 'video') {
+                                    // Проверка на YouTube/обычное видео
+                                    if (item.url.includes('youtu.be') || item.url.includes('youtube.com')) {
+                                         const videoId = item.url.split('v=')[1] || item.url.split('/').pop().split('?')[0];
+                                         const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                                         content += `<iframe src="${embedUrl}" class="product-gallery-video" frameborder="0" allowfullscreen></iframe>`;
+                                    } else {
+                                        content += `<video src="${item.url}" class="product-gallery-video" controls playsinline></video>`;
+                                    }
+                                }
+                            });
+
+                            content += `</div>`;
+                        }
+                    } catch (e) {
+                        console.error('Ошибка при разборе mediaJson:', e);
+                    }
+                }
+                // -------------------------------------------------------------
                 
                 // Защита названия товара от кавычек при клике
                 content += `
