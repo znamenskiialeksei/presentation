@@ -1595,6 +1595,158 @@
             flex-shrink: 0;
             background: #000;
         }
+        
+        /* --- СТИЛИ ДЛЯ РЕЖИМА ПРЕЗЕНТАЦИИ --- */
+        .presentation-mode-btn {
+            background-color: #9c27b0;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            transition: background-color 0.2s;
+            font-weight: bold;
+        }
+        .presentation-mode-btn:hover {
+            background-color: #7b1fa2;
+        }
+
+        .presentation-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .slide-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .slide-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .slide-type {
+            font-size: 0.8em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .slide-number {
+            font-weight: bold;
+            color: #9c27b0;
+            font-size: 1.2em;
+        }
+        
+        .slide-title {
+            font-size: 1.5em;
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .slide-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 20px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .slide-media {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .slide-script-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .slide-script-label {
+            font-weight: bold;
+            color: #1976D2;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 0.9em;
+        }
+        
+        .slide-prompt {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 20px;
+            font-style: italic;
+            border-top: 1px dashed #ccc;
+            padding-top: 10px;
+            width: 100%;
+        }
+
+        .presentation-controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding-top: 10px;
+        }
+
+        .presentation-nav-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .presentation-nav-btn.prev {
+            background-color: #757575;
+            color: white;
+        }
+        .presentation-nav-btn.next {
+            background-color: #2196F3;
+            color: white;
+        }
+        .presentation-nav-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -1728,13 +1880,15 @@
                             const safeVideo = item.video || '';
                             // Кодируем дополнительные медиа материалы (массив) в JSON строку
                             const safeMedia = item.media ? encodeURIComponent(JSON.stringify(item.media)) : '';
+                            // Кодируем данные презентации, если они есть
+                            const safePresentation = item.presentation ? encodeURIComponent(JSON.stringify(item.presentation)) : '';
 
                             html += `
-                            <div class="product-card" onclick="window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}', '${safeMedia}')">
+                            <div class="product-card" onclick="window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}', '${safeMedia}', '${safePresentation}')">
                                 <img src="${safeImage}" alt="${safeTitle}">
                                 <h3>${safeTitle}</h3>
                                 <p class="price">${safePrice}</p>
-                                <button class="desc-btn" onclick="event.stopPropagation(); window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}', '${safeMedia}')">Описание</button>
+                                <button class="desc-btn" onclick="event.stopPropagation(); window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}', '${safeMedia}', '${safePresentation}')">Описание</button>
                                 <button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('${jsSafeTitle}')">Заказать</button>
                             </div>`;
                         });
@@ -2097,6 +2251,87 @@
                             {
                                 name: "Для начинающих",
                                 items: [
+                                    {
+                                        title: "Курс: Украшения-Фейерверк",
+                                        price: "50 EUR",
+                                        currency: "",
+                                        image: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5276.jpg", // Используем обложку из презентации
+                                        description: "Авторская технология создания самого востребованного украшения года. От «В стол» до «Хит продаж».",
+                                        // --- НОВЫЙ БЛОК ПРЕЗЕНТАЦИИ ---
+                                        presentation: [
+                                            {
+                                                slideNumber: 1,
+                                                type: "Титульный",
+                                                header: "От «В стол» до «Хит продаж» 1",
+                                                slideText: "Авторская технология создания самого востребованного украшения года.",
+                                                speakerScript: "Приветствую. Если вы здесь, значит, вы ищете не просто новое хобби, а способ монетизировать свое творчество. Сегодня я покажу путь от забитого стола до очередей клиентов.",
+                                                media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5276.jpg",
+                                                mediaType: "image",
+                                                backgroundPrompt: "Luxury beige silk texture background, soft folds, expensive fabric, high jewelry aesthetic, soft golden lighting, minimalist, elegant, blurred, 8k --ar 9:16"
+                                            },
+                                            {
+                                                slideNumber: 2,
+                                                type: "Проблема",
+                                                header: "Устали работать «в пустоту»? 2",
+                                                slideText: "• Идеальные изделия пылятся в столе.<br>• Нет понимания, что сейчас покупают.<br>• Страх, что опять не купят. 3",
+                                                speakerScript: "Я знаю это чувство. Вы вкладываете душу, время и деньги, делаете идеально... но изделия остаются лежать в шкатулке. Проблема не в ваших руках, а в выборе продукта.",
+                                                media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5281.MOV",
+                                                mediaType: "video",
+                                                backgroundPrompt: "Abstract background, macro photography of champagne bubbles, soft beige and cream tones, bokeh effect, elegant and sophisticated, negative space for text --ar 9:16"
+                                            },
+                                            {
+                                                slideNumber: 3,
+                                                type: "Решение / Технология",
+                                                header: "Секрет Трансформации 4",
+                                                slideText: "Одна техника = 3 продукта:<br>• Кольцо «Фейерверк»<br>• Серьги<br>• Кулон 5",
+                                                speakerScript: "Я даю вам не просто схему кольца. Это конструктор. Освоив эту технику один раз, вы сможете создавать целые коллекции: серьги, кулоны, кольца. Это универсальный навык.",
+                                                media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5278.MP4",
+                                                mediaType: "video",
+                                                backgroundPrompt: "Close up texture of cream colored velvet, soft shadows, luxurious feel, clean composition, warm lighting, photorealistic, premium design style --ar 9:16"
+                                            },
+                                            {
+                                                slideNumber: 4,
+                                                type: "Оффер (Наполнение)",
+                                                header: "Что внутри курса? 6",
+                                                slideText: "• 5 пошаговых видео-уроков.<br>• Список материалов (без лишних трат).<br>• Доступ навсегда. 7777",
+                                                speakerScript: "Никакой воды. 5 коротких уроков, готовый список покупок, чтобы вы не тратили лишнего. Даже если вы новичок — у вас получится, потому что методика разбита на простые шаги.",
+                                                media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5277.jpg",
+                                                mediaType: "image",
+                                                backgroundPrompt: "Abstract light refraction through crystal glass, soft beige and white palette, dreamy atmosphere, elegant blur, high key lighting, minimalist --ar 9:16"
+                                            },
+                                            {
+                                                slideNumber: 5,
+                                                type: "Кейс / Social Proof",
+                                                header: "Раскупили за 1 час 8",
+                                                slideText: "Коллекция на базе этого дизайна была продана на ярмарке за первый час. 9",
+                                                speakerScript: "Моя экспертиза в том, что я знаю, что покупают люди10. Дизайн \"Фейерверк\" — это магнит. На последней ярмарке стенд опустел за час. Это украшение продает само себя.",
+                                                media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5280.MOV",
+                                                mediaType: "video",
+                                                backgroundPrompt: "Soft focus image of pearl necklace on silk table, extreme close up background, creamy tones, rich texture, old money aesthetic, sophisticated --ar 9:16"
+                                            },
+                                            {
+                                                slideNumber: 6,
+                                                type: "Цена и Окупаемость",
+                                                header: "Окупаемость: 2 изделия 11",
+                                                slideText: "Стоимость МК: 50 EUR 12<br><br>Инвестиция, которая вернется мгновенно.",
+                                                speakerScript: "Цена мастер-класса — всего 50 евро. Чтобы \"отбить\" эти вложения и выйти в плюс, вам достаточно продать всего два кольца, сделанных по этому уроку.",
+                                                media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/video_2025.mp4", // Placeholder file name inferred
+                                                mediaType: "video",
+                                                backgroundPrompt: "Morning sunlight passing through sheer curtains, soft shadows on a beige wall, cozy and expensive atmosphere, minimalist background --ar 9:16"
+                                            },
+                                            {
+                                                slideNumber: 7,
+                                                type: "Призыв (CTA)",
+                                                header: "Ваш старт — сегодня 13",
+                                                slideText: "Напишите «ХОЧУ ФЕЙЕРВЕРК», чтобы забрать урок. 14<br><br>Хватит откладывать продажи!",
+                                                speakerScript: "Перестаньте делать \"для себя\". Начните делать для клиентов15. Пишите кодовое слово, забирайте урок и уже на этой неделе создайте свой первый хит продаж.",
+                                                media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5276.jpg",
+                                                mediaType: "image",
+                                                backgroundPrompt: "Solid expensive beige paper texture, embossed gold lines abstract, very minimalist, plenty of space for large text, centered composition --ar 9:16"
+                                            }
+                                        ]
+                                        // ------------------------------------
+                                    },
                                     { title: "МК Основы", price: 1000, currency: "р", image: "https://via.placeholder.com/150", description: "Базовые техники." },
                                     { title: "МК Браслет", price: 1200, currency: "р", image: "https://via.placeholder.com/150", description: "Создаем браслет." },
                                     { title: "МК Серьги", price: 1200, currency: "р", image: "https://via.placeholder.com/150", description: "Создаем серьги." },
@@ -3216,7 +3451,8 @@
                 window.open('https://wa.me/79213047892?text=' + message, '_blank');
             };
 
-            window.showProductDetails = function(title, price, description, imageUrl, videoUrl, mediaJson) {
+            // --- ОБНОВЛЕННАЯ ФУНКЦИЯ ПОКАЗА ДЕТАЛЕЙ (С ПРЕЗЕНТАЦИЕЙ) ---
+            window.showProductDetails = function(title, price, description, imageUrl, videoUrl, mediaJson, presentationJson) {
                 // 1. Раскодируем описание обратно в текст
                 let decodedDesc = decodeURIComponent(description);
                 
@@ -3242,6 +3478,18 @@
                             <iframe src="${videoUrl}" style="width: 100%; height: 200px; border: none; border-radius: 8px; margin-top: 10px;"></iframe>
                         </div>
                     `;
+                }
+
+                // --- НОВАЯ ЛОГИКА: ПРЕЗЕНТАЦИЯ ---
+                if (presentationJson && presentationJson !== 'undefined' && presentationJson !== '') {
+                    try {
+                        const slides = JSON.parse(decodeURIComponent(presentationJson));
+                        if (Array.isArray(slides) && slides.length > 0) {
+                             content += `<button class="presentation-mode-btn" onclick="window.initPresentation(decodeURIComponent('${presentationJson}'))">▶ Смотреть Презентацию Курса</button>`;
+                        }
+                    } catch (e) {
+                         console.error('Ошибка при разборе презентации:', e);
+                    }
                 }
 
                 // --- НОВАЯ ЛОГИКА: ОБРАБОТКА МАССИВА МЕДИА (ФОТО И ВИДЕО) ---
@@ -3286,6 +3534,84 @@
                     headerText: 'Детали товара',
                     htmlContent: content
                 });
+            };
+            
+            // --- НОВАЯ ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПРОСМОТРА ПРЕЗЕНТАЦИИ ---
+            window.initPresentation = function(jsonSlides) {
+                const slides = JSON.parse(jsonSlides);
+                let currentSlide = 0;
+                
+                const renderSlide = (index) => {
+                    const slide = slides[index];
+                    const modalText = document.getElementById('modalText');
+                    
+                    let mediaHtml = '';
+                    if (slide.media) {
+                        if (slide.mediaType === 'video' || slide.media.endsWith('.mp4') || slide.media.endsWith('.MOV')) {
+                             mediaHtml = `<video src="${slide.media}" controls class="slide-media"></video>`;
+                        } else {
+                             mediaHtml = `<img src="${slide.media}" class="slide-media" alt="Слайд медиа">`;
+                        }
+                    }
+
+                    const html = `
+                    <div class="presentation-container">
+                        <div class="slide-card">
+                            <div class="slide-header">
+                                <span class="slide-type">${slide.type}</span>
+                                <span class="slide-number">#${slide.slideNumber}</span>
+                            </div>
+                            <div class="slide-title">${slide.header}</div>
+                            ${mediaHtml}
+                            <div class="slide-text">${slide.slideText}</div>
+                            
+                            <div class="slide-script-box">
+                                <span class="slide-script-label">🗣 Скрипт Спикера:</span>
+                                ${slide.speakerScript}
+                            </div>
+                            
+                            <div class="slide-prompt">Prompt: ${slide.backgroundPrompt}</div>
+                        </div>
+                        
+                        <div class="presentation-controls">
+                            <button class="presentation-nav-btn prev" ${index === 0 ? 'disabled' : ''} onclick="window.changeSlide(-1)">❮ Назад</button>
+                            <button class="presentation-nav-btn next" ${index === slides.length - 1 ? 'disabled' : ''} onclick="window.changeSlide(1)">Вперед ❯</button>
+                        </div>
+                        <button onclick="window.closePresentation()" style="margin-top:10px; background:none; border:none; color:#666; cursor:pointer;">Вернуться к товару</button>
+                    </div>
+                    `;
+                    
+                    modalText.innerHTML = html;
+                    // Прокрутка вверх при смене слайда
+                    modalText.scrollTop = 0;
+                };
+                
+                // Сохраняем состояние в глобальные переменные (простой способ для встроенных функций onclick)
+                window.currentPresentationSlides = slides;
+                window.currentPresentationIndex = 0;
+                
+                window.changeSlide = function(direction) {
+                    const newIndex = window.currentPresentationIndex + direction;
+                    if (newIndex >= 0 && newIndex < window.currentPresentationSlides.length) {
+                        window.currentPresentationIndex = newIndex;
+                        renderSlide(newIndex);
+                    }
+                };
+                
+                // Функция возврата (просто перезагружаем детали товара, сохраняя контекст - пока просто закрываем режим презентации)
+                // Для простоты реализации "Add only" без сложного state management, мы можем просто перезагрузить 
+                // контент модального окна через showProductDetails, но нам нужно где-то хранить исходные данные.
+                // Самый простой способ - просто закрыть презентацию и пользователь снова откроет товар.
+                // Но лучше сделать кнопку "Закрыть презентацию", которая вернет HTML товара.
+                // Т.к. мы заменяем innerHTML, проще всего просто перезапросить showProductDetails.
+                // Но у нас нет всех данных под рукой в этой функции.
+                // Поэтому сделаем кнопку "Закрыть", которая просто закроет модальное окно.
+                window.closePresentation = function() {
+                     // Закрываем модальное окно полностью
+                     document.querySelector('.modal-close').click();
+                };
+
+                renderSlide(0);
             };
 
             setupCover();
