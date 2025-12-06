@@ -1521,6 +1521,24 @@
         .buy-btn:hover {
             background-color: #128C7E;
         }
+        
+        /* Стили для новой кнопки Описание */
+        .desc-btn {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 5px; /* Отступ снизу для разделения с кнопкой заказа */
+            transition: background-color 0.2s;
+        }
+
+        .desc-btn:hover {
+            background-color: #0b7dda;
+        }
 
         .sub-page-details {
             margin-bottom: 10px;
@@ -1676,6 +1694,7 @@
                                 <img src="${safeImage}" alt="${safeTitle}">
                                 <h3>${safeTitle}</h3>
                                 <p class="price">${safePrice}</p>
+                                <button class="desc-btn" onclick="event.stopPropagation(); window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}')">Описание</button>
                                 <button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('${jsSafeTitle}')">Заказать</button>
                             </div>`;
                         });
