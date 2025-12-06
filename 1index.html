@@ -1648,8 +1648,7 @@
         /* Начало блока JavaScript */
 
         // =============================================================================
-        // --- ГЕНЕРАТОР КАТАЛОГА (НОВЫЙ ФУНКЦИОНАЛ) ---
-        // Эта функция создает HTML-код карточек товаров автоматически из простой структуры данных.
+        // --- ГЕНЕРАТОР КАТАЛОГА (ИСПРАВЛЕННЫЙ) ---
         // =============================================================================
         function generateSmartCatalog(pageData) {
             let html = `<h2>${pageData.header}</h2><p>${pageData.subHeader}</p>`;
@@ -1661,20 +1660,23 @@
 
                     if (cat.items) {
                         cat.items.forEach(item => {
-                            // Безопасное кодирование данных для передачи в функцию onclick
+                            // Защита от двойных кавычек для HTML атрибутов
                             const safeTitle = (item.title || '').replace(/"/g, '&quot;');
+                            // Защита от одинарных кавычек для передачи внутри JS-вызова onclick
+                            const jsSafeTitle = safeTitle.replace(/'/g, "\\'");
+                            
                             const safePrice = (item.price || '') + (item.currency || '');
-                            // Кодируем описание через encodeURIComponent, чтобы сохранить переносы строк и спецсимволы
+                            // Кодируем описание, чтобы сохранить спецсимволы и переносы строк
                             const safeDesc = encodeURIComponent(item.description || '');
                             const safeImage = item.image || 'https://via.placeholder.com/300x200';
                             const safeVideo = item.video || '';
 
                             html += `
-                            <div class="product-card" onclick="window.showProductDetails('${safeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}')">
+                            <div class="product-card" onclick="window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}')">
                                 <img src="${safeImage}" alt="${safeTitle}">
                                 <h3>${safeTitle}</h3>
                                 <p class="price">${safePrice}</p>
-                                <button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('${safeTitle}')">Заказать</button>
+                                <button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('${jsSafeTitle}')">Заказать</button>
                             </div>`;
                         });
                     }
@@ -1959,7 +1961,7 @@
                                         title: "Мини сумочка «Шкатулка Желаний»",
                                         price: 5600,
                                         currency: "р",
-                                        image: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/Kataljg/Мини сумочка «Шкатулка Желаний»/Мини сумочка «Шкатулка Желаний».jpg",
+                                        image: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/Kataljg/Мини сумочка  «Шкатулка Желаний»",
                                         video: "",
                                         description: `В мире, где личная магия часто остается незаметной, я создала открытый вызов.
                                         
@@ -3114,22 +3116,28 @@
                 }
             }
 
-            // --- НОВЫЕ ФУНКЦИИ ДЛЯ МАГАЗИНА ---
+            // --- НОВЫЕ ФУНКЦИИ ДЛЯ МАГАЗИНА (ИСПРАВЛЕННЫЕ) ---
             window.orderOneClick = function(productName) {
                 const message = encodeURIComponent('Здравствуйте! Хочу заказать: ' + productName);
                 window.open('https://wa.me/9213047892?text=' + message, '_blank');
             };
 
             window.showProductDetails = function(title, price, description, imageUrl, videoUrl) {
+                // 1. Раскодируем описание обратно в текст
+                let decodedDesc = decodeURIComponent(description);
+                
+                // 2. Превращаем переносы строк в HTML теги <br>, чтобы текст не слипался
+                decodedDesc = decodedDesc.replace(/\n/g, '<br>');
+
                 const modalHeader = document.querySelector('#mediaModal .modal-header');
                 const modalFooter = document.querySelector('#mediaModal .modal-footer');
                 
                 let content = `
                     <div style="text-align: center;">
-                        <img src="${imageUrl || 'https://via.placeholder.com/300x200'}" style="max-width: 100%; border-radius: 8px; margin-bottom: 15px;">
+                        <img src="${imageUrl || 'https://via.placeholder.com/300x200'}" style="max-width: 100%; max-height: 300px; object-fit: contain; border-radius: 8px; margin-bottom: 15px;">
                         <h2 style="color: #333; margin-bottom: 10px;">${title}</h2>
                         <h3 style="color: #E91E63; margin-bottom: 15px;">${price}</h3>
-                        <p style="text-align: left; line-height: 1.5; margin-bottom: 20px;">${description}</p>
+                        <p style="text-align: left; line-height: 1.5; margin-bottom: 20px;">${decodedDesc}</p>
                 `;
                 
                 if (videoUrl) {
@@ -3141,8 +3149,9 @@
                     `;
                 }
                 
+                // Защита названия товара от кавычек при клике
                 content += `
-                        <button onclick="window.orderOneClick('${title}')" style="background: #25D366; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-size: 1.1em; cursor: pointer; width: 100%;">Заказать сейчас</button>
+                        <button onclick="window.orderOneClick('${title.replace(/'/g, "\\'")}')" style="background: #25D366; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-size: 1.1em; cursor: pointer; width: 100%; margin-top: 10px;">Заказать сейчас</button>
                     </div>
                 `;
 
