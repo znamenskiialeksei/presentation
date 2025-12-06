@@ -586,6 +586,8 @@
             /* Прокрутка, если текст не помещается */
             line-height: 1.6;
             /* Межстрочный интервал */
+            width: 90%;
+            max-width: 600px;
         }
 
         .modal-close {
@@ -1459,137 +1461,99 @@
             color: #5599FF !important;
         }
 
-        /* --- НОВЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ТОВАРОВ И МОДАЛЬНОГО ОКНА ПРОДУКТА --- */
+        /* --- НОВЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ТОВАРОВ И СЕТКИ --- */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 15px;
-            margin-top: 20px;
-            width: 100%;
+            margin-top: 15px;
+            padding-bottom: 20px;
         }
 
         .product-card {
+            background: #fff;
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 10px;
             text-align: center;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
-            background: #fff;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        .product-img {
+        .product-card img {
             width: 100%;
-            height: 150px;
+            height: 160px;
             object-fit: cover;
             border-radius: 4px;
             margin-bottom: 10px;
         }
 
-        .product-title {
-            font-weight: bold;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-            min-height: 40px; /* Чтобы карточки были одной высоты */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .product-card h3 {
+            font-size: 1em;
+            margin: 0 0 5px 0;
+            color: #333;
         }
 
-        .product-price {
-            color: #E91E63;
+        .product-card .price {
             font-weight: bold;
+            color: #E91E63;
             margin-bottom: 10px;
         }
 
-        .product-buy-btn {
-            background: #4CAF50;
+        .buy-btn {
+            background-color: #25D366;
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            width: 100%;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9em;
             cursor: pointer;
-            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.2s;
         }
 
-        .product-buy-btn:hover {
-            background: #388E3C;
+        .buy-btn:hover {
+            background-color: #128C7E;
         }
 
-        /* Стили для модального окна товара */
-        #productModalContent {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            max-width: 800px;
-            width: 95%;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
+        .sub-page-details {
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            overflow: hidden;
         }
 
-        .prod-modal-layout {
+        .sub-page-details summary {
+            background-color: #fafafa;
+            padding: 10px 15px;
+            font-weight: 500;
+            font-size: 1em;
+        }
+        
+        .sub-page-details[open] {
+            padding-bottom: 15px;
+        }
+
+        /* Дополнительные стили для модального окна товара */
+        .product-modal-flex {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
-        }
-
-        .prod-modal-gallery {
-            flex: 1 1 300px;
-        }
-
-        .prod-modal-info {
-            flex: 1 1 300px;
             text-align: left;
         }
-
-        .prod-big-img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin-bottom: 10px;
+        .product-modal-image-container {
+            flex: 1 1 300px;
         }
-
-        .prod-modal-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .prod-modal-price {
-            font-size: 1.2em;
-            color: #E91E63;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .prod-modal-desc {
-            white-space: pre-wrap; /* Сохраняет переносы строк */
-            line-height: 1.5;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .prod-modal-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 30px;
-            cursor: pointer;
-            color: #333;
-            z-index: 10;
+        .product-modal-info-container {
+            flex: 1 1 300px;
         }
     </style>
 </head>
@@ -1651,25 +1615,6 @@
             <iframe id="bookingFrame" src="" title="Форма бронирования"></iframe>
         </div>
     </div>
-    
-    <div id="productModal" class="modal">
-        <div id="productModalContent">
-            <span class="prod-modal-close" onclick="document.getElementById('productModal').style.display='none'">&times;</span>
-            <div class="prod-modal-layout">
-                <div class="prod-modal-gallery">
-                    <img id="prodBigImg" src="" class="prod-big-img" alt="Product Image">
-                    <div id="prodVideoContainer"></div>
-                </div>
-                <div class="prod-modal-info">
-                    <div id="prodTitle" class="prod-modal-title"></div>
-                    <div id="prodPrice" class="prod-modal-price"></div>
-                    <div id="prodDesc" class="prod-modal-desc"></div>
-                    <button id="prodBuyBtn" class="product-buy-btn">Заказать в 1 клик</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <audio id="narrationAudio" preload="auto"></audio>
 
     <div id="admin-constructor-ui">
@@ -1729,6 +1674,10 @@
             //=================== ГЛОБАЛЬНЫЕ НАСТРОЙКИ =====================//
             //==============================================================//
 
+            // Задача 2: Выключатель для обложки.
+            // true: включить обложку (видео). false: выключить обложку (сразу на 1 страницу).
+            enableCover: false,
+
             // true: после окончания аудио на последней странице, плеер начнет воспроизведение с первой.
             // false: воспроизведение остановится после окончания последней страницы.
             isContinuousPlayback: false,
@@ -1744,7 +1693,7 @@
             // --- Настройки видеоконференции (Jitsi) ---
             videoConference: {
                 // true: включить кнопку видеосвязи на нижней панели.
-                enabled: true,
+                enabled: false,
                 // Текст под кнопкой видеосвязи.
                 buttonText: 'видеосвязь',
                 // Уникальное имя комнаты для конференции. Важно, чтобы оно было уникальным для каждого маршрута.
@@ -1777,7 +1726,7 @@
             coverVideoUrl: 'https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/oblogka.mp4',
 
             // Режим масштабирования видео. 'cover' - заполнить весь экран, обрезая лишнее. 'contain' - показать видео целиком.
-            coverVideoFitMode: 'cover',
+            coverVideoFitMode: 'contain',
 
             // Массив текстовых блоков, которые будут отображаться поверх видео на обложке.
             coverTexts: [{
@@ -1790,7 +1739,7 @@
                 // Позиция от левого края (в процентах).
                 left: '45%',
                 // true - показать, false - скрыть.
-                visible: true
+                visible: false
             }],
 
             // Настройки эффекта "пульсации" для кнопок на обложке.
@@ -1825,7 +1774,7 @@
             routeSelector: {
                 visible: true,
                 pulsing: false,
-                icon: '<svg viewBox="0 0 90 40"><rect x="0.5" y="0.5" width="89" height="39" rx="8" fill="#36454F" stroke="#FFFFFF" stroke-width="1"/><text x="45" y="25" font-size="14" font-family="Arial, sans-serif" fill="white" font-weight="bold" text-anchor="middle">Маршруты</text></svg>',
+                icon: '<svg viewBox="0 0 90 40"><rect x="0.5" y="0.5" width="89" height="39" rx="8" fill="#36454F" stroke="#FFFFFF" stroke-width="1"/><text x="45" y="25" font-size="14" font-family="Arial, sans-serif" fill="white" font-weight="bold" text-anchor="middle">Акция</text></svg>',
                 tooltip: 'Топ любимые украшения',
                 top: '90%',
                 left: '50%',
@@ -1860,31 +1809,27 @@
             pages: [
                 
                 //==============================================================//
-                //======================= СТРАНИЦА 1: ОБО МНЕ =================//
+                //=========== СТРАНИЦА 1: ОБО МНЕ (С ВИДЕО) ====================//
                 //==============================================================//
                 {
                     // true - страница будет показана, false - страница будет скрыта из маршрута.
                     published: true,
 
-                    // Основной текстовый контент страницы. Можно использовать HTML-теги.
-                    // Задача 1: добавлено видео слева с обтеканием.
+                    // Основной текстовый контент страницы. 
                     text: `<h2>Обо мне</h2>
+                    <video autoplay loop muted playsinline class="embedded-media size-medium align-left" style="border-radius: 8px;">
+                        <source src="https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/oblogka.mp4" type="video/mp4">
+                    </video>
                     
-                    <video src="https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/oblogka.mp4" autoplay loop muted playsinline style="float: left; width: 150px; margin: 0 15px 15px 0; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"></video>
-
-                    <p>Приветствую! Меня зовут <strong>Василиса Знаменская</strong> - я дизайнер.</p>
-                    <p>Я создаю аксессуары для женщин, которые знают: самый важный человек — это мы сами. Мои изделия — это не просто декор, это личный артефакт вашей внутренней силы и безусловной любви к себе.</p>
-                    <p>Моя миссия двойная:</p>
-                    <p>1.  Помочь вам носить роскошь не по праздникам, а каждый день.</p>
-                    <p>2.   Передать мой опыт создания хитов продаж. Я знаю, как тяжело делать и складывать в стол.</p>
-                    <p>Поэтому я делюсь авторскими технологиями, чтобы вы, как и я, создавали изделия, которые мгновенно находят своего покупателя.</p>
-                    <p>Если вы не боитесь быть собой и готовы превратить творчество в прибыльное дело, нам по пути.</p>
-                    <img src="https://images.unsplash.com/photo-1596913746726-8c4391b1574d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" class="embedded-media size-medium" alt="Фото мастера">
-                    <p>Моя миссия — показать, что создавать шедевры может каждый. Именно поэтому я не только делаю украшения на заказ, но и обучаю этому искусству.</p>`,
+                    <p>Приветствую! </p>
+                    <p>Я создаю украшения для женщин, которые выбрали себя. Мои изделия — это осязаемое отражение вашей внутренней силы, напоминающее: роскошь достойна вас каждый день. </p>
+                    <p>А ещё я знаю, как тяжело, когда делаешь и складываешь «в стол». Поэтому я делюсь авторскими технологиями, чтобы ваше любимое дело приносило вам и радость, и стабильный доход. Нам по пути. </p>`,
                     
                     narrationEndTime: 33,
                     collapsible: false,
                     customHeight: 'auto',
+
+                    // Массив кастомных выпадающих меню, которые можно разместить прямо на этой странице.
                     customDropdowns: [{
                         visible: true,
                         pulsing: true,
@@ -1905,177 +1850,285 @@
                 },
 
                 //==============================================================//
-                //============ ЗАДАЧА 2: УКРАШЕНИЯ И АКСЕССУАРЫ ================//
+                //=========== СТРАНИЦА 2: В НАЛИЧИИ (5 ПОД-СТРАНИЦ) ============//
                 //==============================================================//
-                
-                // Главная страница раздела
                 {
                     published: true,
                     collapsedOnLoad: true,
                     collapsible: true,
                     customHeight: 'auto',
                     text: `<h2>Украшения и аксессуары в наличии</h2>
-                    <p>Добро пожаловать в мой каталог. Здесь представлены мои лучшие работы. Вы можете заказать любое из этих изделий или запросить индивидуальный дизайн.</p>
-                    <p>Нажмите на кнопки ниже или листайте дальше, чтобы увидеть коллекции.</p>`,
-                    narrationEndTime: 40,
-                    extraMedia: [
-                        { type: 'text', buttonText: 'Коллекция 1', buttonColor: '#E91E63', headerText: 'Переход', url: '', footerText: 'Листайте вперед' }, // Кнопки просто для вида, навигация через "Вперед"
+                    <p>Здесь вы можете выбрать готовые изделия. Нажмите на раздел, чтобы увидеть товары.</p>`,
+                    narrationEndTime: 91,
+                    // ЗАДАЧА 1: УДОБНОЕ ЗАПОЛНЕНИЕ КАРТОЧЕК
+                    // Заполните массив productCategories для автоматической генерации карточек
+                    productCategories: [
+                        {
+                            title: 'Кольца "Фейерверк"',
+                            products: [
+                                {
+                                    name: 'Золотое кольцо',
+                                    price: 3500,
+                                    currency: 'р',
+                                    image: 'https://via.placeholder.com/150',
+                                    video: '', // Ссылка на видео (необязательно)
+                                    description: 'Роскошное кольцо с кристаллами Swarovski.'
+                                },
+                                {
+                                    name: 'Серебряное кольцо',
+                                    price: 3000,
+                                    currency: 'р',
+                                    image: 'https://via.placeholder.com/150',
+                                    description: 'Элегантность в каждой детали.'
+                                },
+                                {
+                                    name: 'Кольцо Рубин',
+                                    price: 4000,
+                                    currency: 'р',
+                                    image: 'https://via.placeholder.com/150',
+                                    description: 'Яркий акцент для вашего образа.'
+                                },
+                                {
+                                    name: 'Кольцо Изумруд',
+                                    price: 4200,
+                                    currency: 'р',
+                                    image: 'https://via.placeholder.com/150',
+                                    description: 'Глубокий зеленый цвет.'
+                                },
+                                {
+                                    name: 'Кольцо Сапфир',
+                                    price: 4500,
+                                    currency: 'р',
+                                    image: 'https://via.placeholder.com/150',
+                                    description: 'Королевский синий.'
+                                }
+                            ]
+                        },
+                        {
+                            title: 'Серьги Вечерние',
+                            products: [
+                                { name: 'Серьги Длинные', price: 2500, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Идеальны для вечера.' },
+                                { name: 'Серьги Пусеты', price: 1500, currency: 'р', image: 'https://via.placeholder.com/150', description: 'На каждый день.' },
+                                { name: 'Серьги Кольца', price: 2000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Классика жанра.' },
+                                { name: 'Серьги Капли', price: 2200, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Утонченный стиль.' },
+                                { name: 'Серьги Геометрия', price: 2400, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Современный дизайн.' }
+                            ]
+                        },
+                        {
+                            title: 'Браслеты',
+                            products: [
+                                { name: 'Браслет 1', price: 1000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Браслет 2', price: 1000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Браслет 3', price: 1000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Браслет 4', price: 1000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Браслет 5', price: 1000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
+                        },
+                        {
+                            title: 'Колье и подвески',
+                            products: [
+                                { name: 'Колье 1', price: 5000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Колье 2', price: 5000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Колье 3', price: 5000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Колье 4', price: 5000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Колье 5', price: 5000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
+                        },
+                        {
+                            title: 'Сумочки',
+                            products: [
+                                {
+                                    name: 'Мини сумочка «Шкатулка Желаний»',
+                                    price: 200,
+                                    currency: 'р',
+                                    image: 'https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/Kataljg/Мини сумочка «Шкатулка Желаний»/Мини сумочка «Шкатулка Желаний».jpg',
+                                    description: `В мире, где личная магия часто остается незаметной, я создала открытый вызов.
+                                    Это квинтэссенция Haute Couture: миниатюрный размер, но максимально дерзкий эффект.
+                                    Каждая пайетка и бисеринка пришиты вручную, чтобы создать эффект той самой, неподвластной времени магии шика Chanel.
+                                    Но это не просто мини-сумочка.
+                                    Это украшение, которое мгновенно превращает простой образ в произведение искусства.
+                                    Носите ее как бодичейн, колье или как акцентный пояс. Она — ваш личный, заряженный на исполнение желаний артефакт.
+                                    Вы будете чувствовать себя не иначе как Королевой: уверенной, исключительной, офигенной.
+                                    Это аксессуар, который несет в себе ваш смысл.
+                                    Он говорит миру: "Да, это моя магия. И она всегда при мне."
+                                    Позвольте себе эту уникальность. — Мини-сумочка «Шкатулка Желаний»: Вышивка пайетками и бисером . Кристаллы и бусины Сваровски. Функциональный/нарядный аксессуар.`
+                                },
+                                { name: 'Сумочка 2', price: 3000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Сумочка 3', price: 4000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Сумочка 4', price: 4200, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Сумочка 5', price: 4500, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
+                        },
+                        {
+                            title: 'Комплекты',
+                            products: [
+                                { name: 'Комплект 1', price: 9000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Комплект 2', price: 9000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Комплект 3', price: 9000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Комплект 4', price: 9000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Комплект 5', price: 9000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
+                        }
                     ]
                 },
 
-                // Подстраница 1: Коллекция "Шкатулка Желаний"
+                //==============================================================//
+                //=========== СТРАНИЦА 3: МАСТЕР-КЛАССЫ (5 ПОД-СТРАНИЦ) ========//
+                //==============================================================//
                 {
                     published: true,
-                    collapsedOnLoad: true,
                     collapsible: true,
+                    collapsedOnLoad: true,
                     customHeight: 'auto',
-                    text: `<h3>Коллекция: Шкатулка Желаний</h3><p>Уникальные мини-сумочки и аксессуары.</p>`,
+                    text: `<h2>Обучение и мастер-классы</h2>
+                    <p>Научитесь создавать шедевры своими руками.</p>`,
                     narrationEndTime: 0,
-                    // Массив товаров для этой страницы
-                    products: [
-                        {
-                            id: 'bag_wish_box_01',
-                            name: 'Мини сумочка «Шкатулка Желаний»',
-                            price: 5600,
-                            currency: 'RUB',
-                            image: 'https://sun9-66.userapi.com/impg/c857732/v857732338/22e505/Xz4q6y6y6y6.jpg?size=604x604&quality=96&sign=c9f7c0f0e0d0c0b0a090807060504030&type=album', // Заглушка, замените на реальную ссылку
-                            description: `В мире, где личная магия часто остается незаметной, я создала открытый вызов.
-
-Это квинтэссенция Haute Couture: миниатюрный размер, но максимально дерзкий эффект. Каждая пайетка и бисеринка пришиты вручную, чтобы создать эффект той самой, неподвластной времени магии шика Chanel.
-
-Но это не просто мини-сумочка.
-
-Это украшение, которое мгновенно превращает простой образ в произведение искусства. Носите ее как бодичейн, колье или как акцентный пояс. Она — ваш личный, заряженный на исполнение желаний артефакт.
-
-Вы будете чувствовать себя не иначе как Королевой: уверенной, исключительной, офигенной. Это аксессуар, который несет в себе ваш смысл. Он говорит миру:
-
-"Да, это моя магия. И она всегда при мне."
-
-Позвольте себе эту уникальность.
-
-— Мини-сумочка «Шкатулка Желаний»: Вышивка пайетками и бисером . Кристаллы и бусины Сваровски. Функциональный/нарядный аксессуар.`,
-                            video: '' 
+                    productCategories: [
+                         {
+                            title: 'Для начинающих',
+                            products: [
+                                { name: 'МК Основы', price: 1000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Базовые техники.' },
+                                { name: 'МК Браслет', price: 1200, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Создание браслета.' },
+                                { name: 'МК Серьги', price: 1200, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Создание серег.' },
+                                { name: 'МК Кольцо', price: 1200, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Создание кольца.' },
+                                { name: 'МК Подвеска', price: 1200, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Создание подвески.' }
+                            ]
                         },
-                        // Добавьте еще 4 товара по аналогии...
-                        { id: 'item_2', name: 'Товар 2', price: 3000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание товара 2' },
-                        { id: 'item_3', name: 'Товар 3', price: 4500, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание товара 3' },
-                        { id: 'item_4', name: 'Товар 4', price: 6000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание товара 4' },
-                        { id: 'item_5', name: 'Товар 5', price: 7500, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание товара 5' }
+                        {
+                            title: 'Продвинутый уровень',
+                            products: [
+                                { name: 'МК Сложный', price: 2000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'МК Объем', price: 2000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'МК Сетка', price: 2000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'МК Камни', price: 2000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'МК Дизайн', price: 2000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
+                        },
+                         {
+                            title: 'Про бизнес',
+                            products: [
+                                { name: 'МК Продажи', price: 5000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'МК Фото', price: 3000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'МК Бренд', price: 4000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'МК Инста', price: 3000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'МК Тексты', price: 2000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
+                        },
+                         {
+                            title: 'Индивидуальное обучение',
+                            products: [
+                                { name: 'Наставничество', price: 15000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Разбор', price: 5000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Консультация', price: 3000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Урок Live', price: 4000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Аудит', price: 3000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
+                        },
+                         {
+                            title: 'Материалы',
+                            products: [
+                                { name: 'Набор 1', price: 1500, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Набор 2', price: 1500, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Набор 3', price: 1500, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Набор 4', price: 1500, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Набор 5', price: 1500, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
+                        }
                     ]
                 },
-                // Подстраница 2 (Заглушка)
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Подраздел 2</h3>`, products: [{ id: 'p2_1', name: 'Товар 2-1', price: 100, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-                // Подстраница 3 (Заглушка)
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Подраздел 3</h3>`, products: [{ id: 'p3_1', name: 'Товар 3-1', price: 100, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-                // Подстраница 4 (Заглушка)
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Подраздел 4</h3>`, products: [{ id: 'p4_1', name: 'Товар 4-1', price: 100, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-                // Подстраница 5 (Заглушка)
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Подраздел 5</h3>`, products: [{ id: 'p5_1', name: 'Товар 5-1', price: 100, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-
 
                 //==============================================================//
-                //============ ЗАДАЧА 3: ОБУЧЕНИЕ И МАСТЕР-КЛАССЫ ==============//
+                //=========== СТРАНИЦА 4: ПОД ЗАКАЗ (5 ПОД-СТРАНИЦ) ============//
                 //==============================================================//
-                
-                // Главная страница раздела
                 {
                     published: true,
-                    collapsedOnLoad: true,
                     collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h2>Обучение и мастер классы</h2><p>Хотите научиться создавать красоту своими руками? Выберите подходящий курс.</p>`,
-                    narrationEndTime: 0
-                },
-                // Подстраница 1: Курсы для начинающих
-                {
-                    published: true,
                     collapsedOnLoad: true,
-                    collapsible: true,
                     customHeight: 'auto',
-                    text: `<h3>Курсы для начинающих</h3>`,
-                    products: [
-                        {
-                            id: 'course_01',
-                            name: 'МК "Первая брошь"',
-                            price: 2500,
-                            currency: 'RUB',
-                            image: 'https://via.placeholder.com/150',
-                            description: 'Подробный видео-урок по созданию вашей первой броши. Список материалов включен.',
-                            video: ''
+                    text: `<h2>Украшения и аксессуары под заказ</h2>
+                    <p>Эксклюзивные изделия, созданные специально для вас.</p>`,
+                    narrationEndTime: 260,
+                     productCategories: [
+                         {
+                            title: 'Свадебная коллекция',
+                            products: [
+                                { name: 'Диадема', price: 10000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Для невесты.' },
+                                { name: 'Гребень', price: 5000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Шпильки', price: 3000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Колье Невесты', price: 8000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Серьги Невесты', price: 4000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
                         },
-                        { id: 'course_02', name: 'Курс 2', price: 3000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' },
-                        { id: 'course_03', name: 'Курс 3', price: 4000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' },
-                        { id: 'course_04', name: 'Курс 4', price: 5000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' },
-                        { id: 'course_05', name: 'Курс 5', price: 6000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }
+                        {
+                            title: 'Вечерние сумочки',
+                            products: [
+                                { name: 'Клатч 1', price: 12000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Клатч 2', price: 12000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Клатч 3', price: 12000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Сумочка Бисер', price: 15000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Мини-сумочка', price: 8000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
+                        },
+                        {
+                            title: 'Броши',
+                            products: [
+                                { name: 'Брошь Жук', price: 4000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Брошь Цветок', price: 4000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Брошь Птица', price: 4000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Брошь Бант', price: 4000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Брошь Абстракция', price: 4000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
+                        },
+                        {
+                            title: 'Пояса',
+                            products: [
+                                { name: 'Пояс 1', price: 7000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Пояс 2', price: 7000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Пояс 3', price: 7000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Пояс 4', price: 7000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Пояс 5', price: 7000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' }
+                            ]
+                        },
+                        {
+                            title: 'Индивидуальный дизайн',
+                            products: [
+                                { name: 'Эскиз', price: 1000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Подбор камней', price: 0, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Реставрация', price: 2000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Переделка', price: 3000, currency: 'р', image: 'https://via.placeholder.com/150', description: 'Описание...' },
+                                { name: 'Срочный заказ', price: 0, currency: '', image: 'https://via.placeholder.com/150', description: '+30% к стоимости' }
+                            ]
+                        }
                     ]
                 },
-                // Подстраницы 2-5 (Заглушки для Обучения)
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Продвинутый уровень</h3>`, products: [{ id: 'adv_1', name: 'Профи 1', price: 10000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Секреты продаж</h3>`, products: [{ id: 'sale_1', name: 'Продажи 1', price: 5000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Индивидуальное обучение</h3>`, products: [{ id: 'ind_1', name: 'Менторство', price: 50000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Вебинары</h3>`, products: [{ id: 'web_1', name: 'Вебинар 1', price: 1000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-
 
                 //==============================================================//
-                //============ ЗАДАЧА 4: УКРАШЕНИЯ ПОД ЗАКАЗ ===================//
+                //======================= СТРАНИЦА 5: КОНТАКТЫ И ФИДБЕК ========//
                 //==============================================================//
-
-                // Главная страница раздела
                 {
                     published: true,
-                    collapsedOnLoad: true,
                     collapsible: true,
+                    collapsedOnLoad: false,
                     customHeight: 'auto',
-                    text: `<h2>Украшения и аксессуары под заказ</h2><p>Эксклюзивные работы, которые я могу повторить специально для вас.</p>`,
-                    narrationEndTime: 0
+                    text: `<h2>Связь и Обратная связь</h2>
+                    <p>Остались вопросы? Хотите заказать украшение или записаться на курс? Свяжитесь со мной удобным способом.</p>
+                    <p>Укажите ссылку на товар из каталога, который вас заинтересовал, в сообщении ниже.</p>
+                    
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
+                        <a href="https://t.me/@Vasilisaznamenskaya" target="_blank" style="text-decoration: none; background: #0088cc; color: white; padding: 10px 20px; border-radius: 5px; display: flex; align-items: center; gap: 5px;">
+                            Telegram Канал
+                        </a>
+                        <a href="https://youtube.com/yourchannel" target="_blank" style="text-decoration: none; background: #FF0000; color: white; padding: 10px 20px; border-radius: 5px; display: flex; align-items: center; gap: 5px;">
+                            YouTube Канал
+                        </a>
+                    </div>
+                    
+                    <hr>
+                    <p><strong>Форма обратной связи:</strong></p>
+                    <textarea placeholder="Вставьте ссылку на товар или ваш вопрос..." style="width: 100%; height: 100px; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
+                    <button style="background: #333; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-top: 10px; cursor: pointer;" onclick="alert('Спасибо за сообщение! Мы свяжемся с вами.')">Отправить</button>`,
+                    narrationEndTime: 0,
                 },
-                // Подстраница 1
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h3>Эксклюзив</h3>`,
-                    products: [
-                        {
-                            id: 'order_01',
-                            name: 'Колье "Королева"',
-                            price: 15000,
-                            currency: 'RUB',
-                            image: 'https://via.placeholder.com/150',
-                            description: 'Изготовление под заказ. Срок 14 дней.',
-                            video: ''
-                        },
-                        { id: 'ord_2', name: 'Товар 2', price: 3000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' },
-                        { id: 'ord_3', name: 'Товар 3', price: 4500, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' },
-                        { id: 'ord_4', name: 'Товар 4', price: 6000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' },
-                        { id: 'ord_5', name: 'Товар 5', price: 7500, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }
-                    ]
-                },
-                // Подстраницы 2-5 (Заглушки для "Под заказ")
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Свадебное</h3>`, products: [{ id: 'wed_1', name: 'Диадема', price: 8000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Вечернее</h3>`, products: [{ id: 'eve_1', name: 'Серьги', price: 4000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Повседневное</h3>`, products: [{ id: 'cas_1', name: 'Браслет', price: 2000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-                { published: true, collapsedOnLoad: true, collapsible: true, customHeight: 'auto', text: `<h3>Подарки</h3>`, products: [{ id: 'gift_1', name: 'Сертификат', price: 5000, currency: 'RUB', image: 'https://via.placeholder.com/150', description: 'Описание' }] },
-
-                // Подстраница обратной связи
-                {
-                    published: true,
-                    collapsedOnLoad: true,
-                    collapsible: true,
-                    customHeight: 'auto',
-                    text: `<h2>Обратная связь</h2><p>Хотите заказать индивидуальное изделие или задать вопрос по товару из каталога? Заполните форму ниже.</p>`,
-                    // Используем iframe для формы (как в исходном коде для бронирования, или ссылку)
-                    mainVideo: {
-                        type: 'iframe', 
-                        buttonText: 'Открыть форму связи', 
-                        buttonColor: '#4CAF50',
-                        buttonTextColor: '#FFFFFF',
-                        url: 'https://docs.google.com/forms/u/0/', // Вставьте ссылку на вашу Google форму
-                        headerText: 'Связаться со мной',
-                        footerText: ''
-                    }
-                }
             ]
         };
         /*--CONFIG_END--*/
@@ -2159,7 +2212,8 @@
             
             let currentPage = 1;
             let isPlaying = false;
-            let isCoverActive = true;
+            // Задача 2: Инициализация обложки в зависимости от флага
+            let isCoverActive = CONFIG.enableCover !== false;
             let isNarratorModeActive = false;
             let tooltipTimeout = null;
             let jitsiApi = null;
@@ -2271,6 +2325,14 @@
             }
 
             function setupCover() {
+                // Задача 2: Если обложка выключена, скрываем её и показываем книгу
+                if (CONFIG.enableCover === false) {
+                    coverView.style.display = 'none';
+                    bookView.style.display = 'flex';
+                    showPage(1);
+                    return; // Прерываем настройку обложки
+                }
+
                 document.querySelector('#main-title').textContent = CONFIG.mainTitle;
                 if (CONFIG.audioUrl) audioPlayer.src = CONFIG.audioUrl;
                 else if (isAdmin) adminErrors.push('Не указан URL для основного аудио');
@@ -2326,6 +2388,30 @@
                     createDropdownButton(CONFIG.routeSelector, coverView);
                 }
             }
+            
+            // Хелпер функция для генерации HTML карточек товаров (Задача 1)
+            function generateProductGridHTML(products) {
+                if (!products || products.length === 0) return '';
+                let html = '<div class="product-grid">';
+                products.forEach(p => {
+                    // Экранирование кавычек для передачи в функцию onclick
+                    const safeName = (p.name || '').replace(/'/g, "\\'");
+                    const safePrice = (p.price + (p.currency || '')).replace(/'/g, "\\'");
+                    const safeDesc = (p.description || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '<br>');
+                    const safeImg = (p.image || '').replace(/'/g, "\\'");
+                    const safeVideo = (p.video || '').replace(/'/g, "\\'");
+
+                    html += `
+                    <div class="product-card" onclick="event.stopPropagation(); window.showProductDetails('${safeName}', '${safePrice}', '${safeDesc}', '${safeImg}', '${safeVideo}')">
+                        <img src="${p.image || 'https://via.placeholder.com/150'}" alt="${p.name}">
+                        <h3>${p.name}</h3>
+                        <p class="price">${p.price} ${p.currency || ''}</p>
+                        <button class="buy-btn" onclick="event.stopPropagation(); window.orderOneClick('${safeName}')">Заказать</button>
+                    </div>`;
+                });
+                html += '</div>';
+                return html;
+            }
 
             function setupBookPages() {
                 const pageViewer = document.querySelector('.page-viewer');
@@ -2372,45 +2458,39 @@
                     });
                     const textContent = document.createElement('p');
                     textContent.innerHTML = pageData.text || '';
-
-                    // --- ЛОГИКА ГЕНЕРАЦИИ СЕТКИ ТОВАРОВ (НОВОЕ) ---
-                    if (pageData.products && Array.isArray(pageData.products)) {
-                        const productGrid = document.createElement('div');
-                        productGrid.className = 'product-grid';
-                        pageData.products.forEach(product => {
-                            const card = document.createElement('div');
-                            card.className = 'product-card';
+                    
+                    // Задача 1: Динамическая генерация под-страниц с карточками
+                    if (pageData.productCategories && Array.isArray(pageData.productCategories)) {
+                        pageData.productCategories.forEach(category => {
+                            const details = document.createElement('details');
+                            details.className = 'sub-page-details';
+                            const summary = document.createElement('summary');
+                            summary.textContent = category.title;
+                            details.appendChild(summary);
                             
-                            // Уникальная ссылка на товар
-                            const productLink = window.location.href.split('?')[0] + '?product=' + product.id;
-
-                            card.innerHTML = `
-                                <img src="${product.image}" class="product-img" alt="${product.name}">
-                                <div class="product-title">${product.name}</div>
-                                <div class="product-price">${product.price} ${product.currency}</div>
-                                <button class="product-buy-btn" onclick="event.stopPropagation(); window.open('https://wa.me/9213047892?text=Заказ: ${product.name} (${product.id})', '_blank')">Заказать в 1 клик</button>
-                            `;
+                            const gridContainer = document.createElement('div');
+                            gridContainer.innerHTML = generateProductGridHTML(category.products);
+                            details.appendChild(gridContainer);
                             
-                            // Открытие модального окна при клике на саму карточку
-                            card.onclick = () => openProductDetails(product);
-                            productGrid.appendChild(card);
+                            textContent.appendChild(details);
                         });
-                        // Добавляем сетку в текстовый контент страницы
-                        textContent.appendChild(productGrid);
                     }
-                    // --- КОНЕЦ ЛОГИКИ ГЕНЕРАЦИИ ТОВАРОВ ---
 
                     if (isFeedMode && pageData.collapsible) {
                         const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = pageData.text;
-                        if(pageData.products) tempDiv.appendChild(textContent.lastChild.cloneNode(true)); // Добавляем товары в tempDiv для правильного рендеринга заголовка
-
-                        const h2 = tempDiv.querySelector('h2') || tempDiv.querySelector('h3'); // Ищем H2 или H3
+                        tempDiv.innerHTML = pageData.text; // Сохраняем исходный текст для заголовка
+                         // Если мы добавили категории, нам нужно аккуратно обработать заголовок
+                        const h2 = tempDiv.querySelector('h2');
                         const title = h2 ? h2.innerHTML : 'Развернуть';
-                        if (h2) h2.remove();
-                        
-                        // Пересобираем контент без заголовка
-                        textContent.innerHTML = tempDiv.innerHTML;
+                        // Очищаем tempDiv, так как мы будем использовать textContent, который уже содержит сгенерированные категории
+                        if (h2) {
+                            // Удаляем H2 из основного контента, чтобы он стал Summary
+                             const textClone = textContent.cloneNode(true);
+                             const h2InClone = textClone.querySelector('h2');
+                             if(h2InClone) h2InClone.remove();
+                             textContent.innerHTML = '';
+                             textContent.appendChild(textClone);
+                        }
 
                         const details = document.createElement('details');
                         details.open = !pageData.collapsedOnLoad;
@@ -2481,7 +2561,6 @@
             const carouselNextBtn = modalCarousel.querySelector('.next');
             let currentCarouselImages = [];
             let currentCarouselIndex = 0;
-
             function openConferenceModal() {
                 if (jitsiApi) return;
                 // --- БЛОК УВЕДОМЛЕНИЯ ---
@@ -2545,7 +2624,7 @@
                     }
                 });
                 mediaModal.querySelector('.modal-header').textContent = media.headerText || '';
-                mediaModal.querySelector('.modal-footer').textContent = '';
+                mediaModal.querySelector('.modal-footer').textContent = media.footerText || '';
 
                 if (media.type === 'carousel' && media.images && media.images.length > 0) {
                     currentCarouselImages = media.images;
@@ -2589,7 +2668,6 @@
                         showCarouselSlide(0);
                     }, 50);
                 } else {
-                    mediaModal.querySelector('.modal-footer').textContent = media.footerText || '';
                     let contentElement;
                     if (media.type === 'iframe') {
                         if (media.width && media.height) {
@@ -2638,7 +2716,12 @@
                     if (contentElement) {
                         if (media.type === 'text') {
                             contentElement.innerHTML = '<em>Загрузка...</em>';
-                            fetch(media.url).then(res => res.text()).then(text => contentElement.innerHTML = text).catch(err => contentElement.innerHTML = '<strong>Ошибка загрузки.</strong>');
+                            // Если передан HTML контент напрямую (наш случай для товаров)
+                            if (media.htmlContent) {
+                                contentElement.innerHTML = media.htmlContent;
+                            } else {
+                                fetch(media.url).then(res => res.text()).then(text => contentElement.innerHTML = text).catch(err => contentElement.innerHTML = '<strong>Ошибка загрузки.</strong>');
+                            }
                         } else {
                             contentElement.src = media.url;
                         }
@@ -2680,32 +2763,6 @@
             }
             mediaModal.querySelector('.modal-close').onclick = () => closeModal(mediaModal);
             bookingModal.querySelector('.modal-close').onclick = () => closeModal(bookingModal);
-
-            // --- НОВАЯ ФУНКЦИЯ ДЛЯ ОТКРЫТИЯ ДЕТАЛЕЙ ТОВАРА ---
-            function openProductDetails(product) {
-                document.getElementById('prodBigImg').src = product.image;
-                document.getElementById('prodTitle').textContent = product.name;
-                document.getElementById('prodPrice').textContent = `${product.price} ${product.currency}`;
-                document.getElementById('prodDesc').textContent = product.description;
-                
-                // Ссылка на покупку
-                document.getElementById('prodBuyBtn').onclick = () => {
-                    window.open(`https://wa.me/9213047892?text=Заказ: ${product.name} (${product.id})`, '_blank');
-                };
-
-                // Вставка видео, если есть
-                const vidContainer = document.getElementById('prodVideoContainer');
-                vidContainer.innerHTML = '';
-                if(product.video) {
-                    if(product.video.includes('youtube')) {
-                         vidContainer.innerHTML = `<iframe src="${product.video}" width="100%" height="200" frameborder="0"></iframe>`;
-                    } else {
-                         vidContainer.innerHTML = `<video src="${product.video}" controls width="100%"></video>`;
-                    }
-                }
-
-                document.getElementById('productModal').style.display = 'flex';
-            }
 
             function openBookingModal() {
                 if (!CONFIG.bookingUrl && isAdmin) {
@@ -2798,15 +2855,29 @@
                     isNarratorModeActive = false;
                     const lastPage = document.querySelector(`.page[data-page-number="${currentPage}"] details`);
                     if (lastPage) lastPage.open = false;
-                    document.getElementById('cover-view').scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    isCoverActive = true;
+                    // Задача 2: Если обложка выключена, просто возвращаемся к верху, но не активируем режим обложки
+                     if (CONFIG.enableCover !== false) {
+                        document.getElementById('cover-view').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        isCoverActive = true;
+                     } else {
+                         scrollToPage(1);
+                     }
                     currentPage = 1;
                 } else {
-                    showPage(1);
+                     if (CONFIG.enableCover !== false) {
+                         // Обычное поведение: возврат к обложке
+                        bookView.style.display = 'none';
+                        coverView.style.display = 'flex';
+                        isCoverActive = true;
+                     } else {
+                         // Если обложка выключена, остаемся на 1 странице и стопаем
+                         showPage(1);
+                     }
                 }
+                updateButtonsAndIndicator();
             };
             nextBtn.addEventListener('click', () => {
                 if (!isFeedMode) {
@@ -2830,10 +2901,13 @@
                         showPage(prevPage);
                         audioPlayer.currentTime = getPageStartTime(prevPage);
                     } else {
-                        bookView.style.display = 'none';
-                        coverView.style.display = 'flex';
-                        isCoverActive = true;
-                        audioPlayer.pause();
+                        // Задача 2: Запрет возврата к обложке, если она выключена
+                        if (CONFIG.enableCover !== false) {
+                            bookView.style.display = 'none';
+                            coverView.style.display = 'flex';
+                            isCoverActive = true;
+                            audioPlayer.pause();
+                        }
                         updateButtonsAndIndicator();
                     }
                 }
@@ -3094,6 +3168,60 @@
                     wrapper.style.display = 'none';
                 }
             }
+
+            // --- НОВЫЕ ФУНКЦИИ ДЛЯ МАГАЗИНА (Задача 1: Обновлено) ---
+            window.orderOneClick = function(productName) {
+                const message = encodeURIComponent('Здравствуйте! Хочу заказать: ' + productName);
+                window.open('https://wa.me/9213047892?text=' + message, '_blank');
+            };
+
+            // Обновленная функция для показа деталей товара с поддержкой структурированных данных
+            window.showProductDetails = function(title, price, description, imageUrl, videoUrl) {
+                const modalHeader = document.querySelector('#mediaModal .modal-header');
+                const modalFooter = document.querySelector('#mediaModal .modal-footer');
+                
+                let content = `
+                    <div class="product-modal-flex">
+                        <div class="product-modal-image-container">
+                            <img src="${imageUrl || 'https://via.placeholder.com/300x200'}" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">
+                `;
+                 if (videoUrl && videoUrl.trim() !== '') {
+                     // Простейшая проверка на YouTube
+                     let embedUrl = videoUrl;
+                     if (videoUrl.includes('youtu.be') || videoUrl.includes('youtube.com')) {
+                        const videoId = videoUrl.split('v=')[1] || videoUrl.split('/').pop().split('?')[0];
+                        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                        content += `
+                        <div style="margin-top: 10px;">
+                            <strong>Видео обзор:</strong>
+                            <iframe src="${embedUrl}" style="width: 100%; aspect-ratio: 16/9; border: none; border-radius: 8px; margin-top: 5px;" allowfullscreen></iframe>
+                        </div>`;
+                     } else {
+                         // Обычное видео
+                         content += `
+                         <div style="margin-top: 10px;">
+                            <strong>Видео обзор:</strong>
+                            <video src="${videoUrl}" controls style="width: 100%; border-radius: 8px; margin-top: 5px;"></video>
+                        </div>`;
+                     }
+                }
+                
+                content += `</div>
+                        <div class="product-modal-info-container">
+                            <h2 style="color: #333; margin-top: 0; margin-bottom: 10px;">${title}</h2>
+                            <h3 style="color: #E91E63; margin-bottom: 20px;">${price}</h3>
+                            <div style="line-height: 1.6; margin-bottom: 25px;">${description}</div>
+                            <button onclick="window.orderOneClick('${title.replace(/'/g, "\\'")}')" style="background: #25D366; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">Заказать сейчас в WhatsApp</button>
+                        </div>
+                    </div>
+                `;
+
+                openMediaModal({
+                    type: 'text',
+                    headerText: 'Детали товара',
+                    htmlContent: content
+                });
+            };
 
             setupCover();
             setupBookPages();
