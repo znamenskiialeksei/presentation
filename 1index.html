@@ -1747,6 +1747,88 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
+
+        /* --- СТИЛИЗОВАННАЯ ПРЕЗЕНТАЦИЯ V2 --- */
+        .slide-card-modern {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 15px auto;
+        }
+
+        .modern-slide-header {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+            border-bottom: none;
+        }
+        
+        .modern-slide-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #aaa;
+            letter-spacing: 2px;
+        }
+
+        .modern-slide-title {
+            font-family: 'Playfair Display', 'Times New Roman', serif;
+            font-size: 2rem;
+            color: #222;
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .modern-slide-media {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-height: 450px;
+            object-fit: contain;
+            background-color: #f8f8f8;
+        }
+
+        .modern-slide-content {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: #444;
+            text-align: center;
+            max-width: 90%;
+            margin-bottom: 20px;
+        }
+
+        .modern-nav-btn {
+            background: transparent;
+            border: 2px solid #333;
+            color: #333;
+            padding: 10px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .modern-nav-btn:hover:not(:disabled) {
+            background: #333;
+            color: #fff;
+        }
+
+        .modern-nav-btn:disabled {
+            border-color: #ccc;
+            color: #ccc;
+            cursor: default;
+        }
     </style>
 </head>
 
@@ -2262,7 +2344,7 @@
                                             {
                                                 slideNumber: 1,
                                                 type: "Титульный",
-                                                header: "От «В стол» до «Хит продаж»",
+                                                header: "От «В стол» до «Хит продаж» 1",
                                                 slideText: "Авторская технология создания самого востребованного украшения года.",
                                                 speakerScript: "Приветствую. Если вы здесь, значит, вы ищете не просто новое хобби, а способ монетизировать свое творчество. Сегодня я покажу путь от забитого стола до очередей клиентов.",
                                                 media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5276.jpg",
@@ -2272,8 +2354,8 @@
                                             {
                                                 slideNumber: 2,
                                                 type: "Проблема",
-                                                header: "Устали работать «в пустоту»?",
-                                                slideText: "• Идеальные изделия пылятся в столе.<br>• Нет понимания, что сейчас покупают.<br>• Страх, что опять не купят.",
+                                                header: "Устали работать «в пустоту»? 2",
+                                                slideText: "• Идеальные изделия пылятся в столе.<br>• Нет понимания, что сейчас покупают.<br>• Страх, что опять не купят. 3",
                                                 speakerScript: "Я знаю это чувство. Вы вкладываете душу, время и деньги, делаете идеально... но изделия остаются лежать в шкатулке. Проблема не в ваших руках, а в выборе продукта.",
                                                 media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5281.MOV",
                                                 mediaType: "video",
@@ -2282,8 +2364,8 @@
                                             {
                                                 slideNumber: 3,
                                                 type: "Решение / Технология",
-                                                header: "Секрет Трансформации",
-                                                slideText: "Одна техника = 3 продукта:<br>• Кольцо «Фейерверк»<br>• Серьги<br>• Кулон",
+                                                header: "Секрет Трансформации 4",
+                                                slideText: "Одна техника = 3 продукта:<br>• Кольцо «Фейерверк»<br>• Серьги<br>• Кулон 5",
                                                 speakerScript: "Я даю вам не просто схему кольца. Это конструктор. Освоив эту технику один раз, вы сможете создавать целые коллекции: серьги, кулоны, кольца. Это универсальный навык.",
                                                 media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5278.MP4",
                                                 mediaType: "video",
@@ -2292,8 +2374,8 @@
                                             {
                                                 slideNumber: 4,
                                                 type: "Оффер (Наполнение)",
-                                                header: "Что внутри курса?",
-                                                slideText: "• 5 пошаговых видео-уроков.<br>• Список материалов (без лишних трат).<br>• Доступ навсегда.",
+                                                header: "Что внутри курса? 6",
+                                                slideText: "• 5 пошаговых видео-уроков.<br>• Список материалов (без лишних трат).<br>• Доступ навсегда. 7777",
                                                 speakerScript: "Никакой воды. 5 коротких уроков, готовый список покупок, чтобы вы не тратили лишнего. Даже если вы новичок — у вас получится, потому что методика разбита на простые шаги.",
                                                 media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5277.jpg",
                                                 mediaType: "image",
@@ -2302,9 +2384,9 @@
                                             {
                                                 slideNumber: 5,
                                                 type: "Кейс / Social Proof",
-                                                header: "Раскупили за 1 час",
-                                                slideText: "Коллекция на базе этого дизайна была продана на ярмарке за первый час.",
-                                                speakerScript: "Моя экспертиза в том, что я знаю, что покупают люди. Дизайн \"Фейерверк\" — это магнит. На последней ярмарке стенд опустел за час. Это украшение продает само себя.",
+                                                header: "Раскупили за 1 час 8",
+                                                slideText: "Коллекция на базе этого дизайна была продана на ярмарке за первый час. 9",
+                                                speakerScript: "Моя экспертиза в том, что я знаю, что покупают люди10. Дизайн \"Фейерверк\" — это магнит. На последней ярмарке стенд опустел за час. Это украшение продает само себя.",
                                                 media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5280.MOV",
                                                 mediaType: "video",
                                                 backgroundPrompt: "Soft focus image of pearl necklace on silk table, extreme close up background, creamy tones, rich texture, old money aesthetic, sophisticated --ar 9:16"
@@ -2312,20 +2394,22 @@
                                             {
                                                 slideNumber: 6,
                                                 type: "Цена и Окупаемость",
-                                                header: "Окупаемость: 2 изделия",
-                                                slideText: "Стоимость МК: 50 EUR <br><br>Инвестиция, которая вернется мгновенно.",
+                                                header: "Окупаемость: 2 изделия 11",
+                                                slideText: "Стоимость МК: 50 EUR 12<br><br>Инвестиция, которая вернется мгновенно.",
                                                 speakerScript: "Цена мастер-класса — всего 50 евро. Чтобы \"отбить\" эти вложения и выйти в плюс, вам достаточно продать всего два кольца, сделанных по этому уроку.",
                                                 media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/video_2025.mp4", // Placeholder file name inferred
                                                 mediaType: "video",
+                                                backgroundPrompt: "Morning sunlight passing through sheer curtains, soft shadows on a beige wall, cozy and expensive atmosphere, minimalist background --ar 9:16"
                                             },
                                             {
                                                 slideNumber: 7,
                                                 type: "Призыв (CTA)",
-                                                header: "Ваш старт — сегодня",
-                                                slideText: "Напишите «ХОЧУ ФЕЙЕРВЕРК», чтобы забрать урок. <br><br>Хватит откладывать продажи!",
-                                                speakerScript: "Перестаньте делать \"для себя\". Начните делать для клиентов. Пишите кодовое слово, забирайте урок и уже на этой неделе создайте свой первый хит продаж.",
+                                                header: "Ваш старт — сегодня 13",
+                                                slideText: "Напишите «ХОЧУ ФЕЙЕРВЕРК», чтобы забрать урок. 14<br><br>Хватит откладывать продажи!",
+                                                speakerScript: "Перестаньте делать \"для себя\". Начните делать для клиентов15. Пишите кодовое слово, забирайте урок и уже на этой неделе создайте свой первый хит продаж.",
                                                 media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5276.jpg",
                                                 mediaType: "image",
+                                                backgroundPrompt: "Solid expensive beige paper texture, embossed gold lines abstract, very minimalist, plenty of space for large text, centered composition --ar 9:16"
                                             }
                                         ]
                                         // ------------------------------------
@@ -3546,36 +3630,30 @@
                     let mediaHtml = '';
                     if (slide.media) {
                         if (slide.mediaType === 'video' || slide.media.endsWith('.mp4') || slide.media.endsWith('.MOV')) {
-                             mediaHtml = `<video src="${slide.media}" controls class="slide-media"></video>`;
+                             mediaHtml = `<video src="${slide.media}" controls class="modern-slide-media"></video>`;
                         } else {
-                             mediaHtml = `<img src="${slide.media}" class="slide-media" alt="Слайд медиа">`;
+                             mediaHtml = `<img src="${slide.media}" class="modern-slide-media" alt="Слайд медиа">`;
                         }
                     }
 
+                    // --- ИЗМЕНЕНИЕ ДЛЯ ЗАДАЧИ: Удалены лишние элементы (Скрипт, Промпт) ---
+                    // Использованы новые стильные классы CSS
                     const html = `
-                    <div class="presentation-container">
-                        <div class="slide-card">
-                            <div class="slide-header">
-                                <span class="slide-type">${slide.type}</span>
-                                <span class="slide-number">#${slide.slideNumber}</span>
+                    <div class="presentation-container" style="background: rgba(0,0,0,0.05);">
+                        <div class="slide-card-modern">
+                            <div class="modern-slide-header">
+                                <span class="modern-slide-number">#${slide.slideNumber}</span>
                             </div>
-                            <div class="slide-title">${slide.header}</div>
+                            <div class="modern-slide-title">${slide.header}</div>
                             ${mediaHtml}
-                            <div class="slide-text">${slide.slideText}</div>
-                            
-                            <div class="slide-script-box">
-                                <span class="slide-script-label">🗣 Скрипт Спикера:</span>
-                                ${slide.speakerScript}
-                            </div>
-                            
-                            <div class="slide-prompt">Prompt: ${slide.backgroundPrompt}</div>
+                            <div class="modern-slide-content">${slide.slideText}</div>
                         </div>
                         
-                        <div class="presentation-controls">
-                            <button class="presentation-nav-btn prev" ${index === 0 ? 'disabled' : ''} onclick="window.changeSlide(-1)">❮ Назад</button>
-                            <button class="presentation-nav-btn next" ${index === slides.length - 1 ? 'disabled' : ''} onclick="window.changeSlide(1)">Вперед ❯</button>
+                        <div class="presentation-controls" style="max-width: 800px; width: 100%; margin: 0 auto;">
+                            <button class="modern-nav-btn prev" ${index === 0 ? 'disabled' : ''} onclick="window.changeSlide(-1)">❮ Назад</button>
+                            <button class="modern-nav-btn next" ${index === slides.length - 1 ? 'disabled' : ''} onclick="window.changeSlide(1)">Вперед ❯</button>
                         </div>
-                        <button onclick="window.closePresentation()" style="margin-top:10px; background:none; border:none; color:#666; cursor:pointer;">Вернуться к товару</button>
+                        <button onclick="window.closePresentation()" style="margin-top:20px; background:none; border:none; color:#666; cursor:pointer; text-decoration:underline;">Вернуться к товару</button>
                     </div>
                     `;
                     
