@@ -3120,6 +3120,10 @@
             const whatsappBtn = document.getElementById('whatsappBtn');
             const instagramBtn = document.getElementById('instagramBtn');
 
+            // НОВЫЕ АДМИН-КНОПКИ В НИЖНЕМ МЕНЮ
+            const adminStockBtn = document.getElementById('adminStockBtn');
+            const adminConfigBtn = document.getElementById('adminConfigBtn');
+
             let currentPage = 1;
             let isPlaying = false;
             let isCoverActive = true;
@@ -3385,11 +3389,13 @@
                 });
             }
 
-            // --- ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ УПРАВЛЕНИЯ НИЖНИМИ КНОПКАМИ (ЗАДАЧА 1) ---
+            // --- ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ УПРАВЛЕНИЯ НИЖНИМИ КНОПКАМИ (ЗАДАЧА 1 + АДМИН-КНОПКИ) ---
             function setupBottomMenuButtons() {
                 const buttons = CONFIG.bottomMenuButtons || {};
+                const controlsButtons = document.querySelector('.controls-buttons');
 
-                // Переключение видимости кнопок
+
+                // Переключение видимости основных кнопок
                 document.getElementById('prevBtnWrapper').style.display = buttons.prev === false ? 'none' : 'flex';
                 document.getElementById('playPauseBtnWrapper').style.display = buttons.playPause === false ? 'none' : 'flex';
                 document.getElementById('nextBtnWrapper').style.display = buttons.next === false ? 'none' : 'flex';
@@ -3401,6 +3407,60 @@
                 document.getElementById('telegramBtnWrapper').style.display = buttons.telegram === false ? 'none' : 'flex';
                 document.getElementById('whatsappBtnWrapper').style.display = buttons.whatsapp === false ? 'none' : 'flex';
                 document.getElementById('instagramBtnWrapper').style.display = buttons.instagram === false ? 'none' : 'flex';
+
+
+                // --- АДМИН-КНОПКИ В НИЖНЕМ МЕНЮ (НОВЫЙ ФУНКЦИОНАЛ) ---
+                if (isAdmin) {
+                    // 1. КНОПКА ADMIN: УПРАВЛЕНИЕ ТОВАРАМИ
+                    let adminStockWrapper = document.getElementById('adminStockBtnWrapper');
+                    if (!adminStockWrapper) {
+                        adminStockWrapper = document.createElement('div');
+                        adminStockWrapper.className = 'button-wrapper';
+                        adminStockWrapper.id = 'adminStockBtnWrapper';
+                        adminStockWrapper.innerHTML = `
+                    <button id="adminStockBtn" class="nav-btn" style="background: #28a745;" title="Открыть менеджер наличия">📦</button>
+                    <span class="button-label" style="font-size:0.7em;">Admin: Товары</span>
+                `;
+                        // Вставляем перед кнопкой Videoсвязь, если она есть, или в конец
+                        const refNode = document.getElementById('conferenceBtnWrapper') || document.getElementById('instagramBtnWrapper');
+                        controlsButtons.insertBefore(adminStockWrapper, refNode);
+
+                        document.getElementById('adminStockBtn').onclick = () => {
+                            if (window.AdminStockManagerInstance) {
+                                // Триггерит модальное окно через публичный метод
+                                window.AdminStockManagerInstance.openModal();
+                            }
+                        };
+                    } else {
+                        adminStockWrapper.style.display = 'flex';
+                    }
+
+                    // 2. КНОПКА ADMIN: РЕДАКТОР КОНФИГУРАЦИИ
+                    let adminConfigWrapper = document.getElementById('adminConfigBtnWrapper');
+                    if (!adminConfigWrapper) {
+                        adminConfigWrapper = document.createElement('div');
+                        adminConfigWrapper.className = 'button-wrapper';
+                        adminConfigWrapper.id = 'adminConfigBtnWrapper';
+                        adminConfigWrapper.innerHTML = `
+                    <button id="adminConfigBtn" class="nav-btn" style="background: #007bff;" title="Открыть редактор конфигурации">⚙️</button>
+                    <span class="button-label" style="font-size:0.7em;">Admin: Конфиг</span>
+                `;
+                        // Вставляем после кнопки "Товары"
+                        controlsButtons.appendChild(adminConfigWrapper);
+
+                        document.getElementById('adminConfigBtn').onclick = () => {
+                            const editBtn = document.getElementById('edit-config-btn');
+                            // Триггерим клик по динамически созданной кнопке (которая открывает модальное окно)
+                            if (editBtn) editBtn.click();
+                        };
+                    } else {
+                        adminConfigWrapper.style.display = 'flex';
+                    }
+                } else {
+                    // Скрываем, если не админ
+                    if (document.getElementById('adminStockBtnWrapper')) document.getElementById('adminStockBtnWrapper').style.display = 'none';
+                    if (document.getElementById('adminConfigBtnWrapper')) document.getElementById('adminConfigBtnWrapper').style.display = 'none';
+                }
             }
             // ------------------------------------------------------------------------
 
@@ -3880,11 +3940,28 @@
                         this.closeBtn = document.getElementById('stock-manager-close-btn');
                     }
 
-                    managerBtn.onclick = () => this.openModal();
+                    // --- ОБНОВЛЕНО: Используем новую кнопку в нижнем меню ---
+                    // managerBtn.onclick = () => this.openModal(); 
+                    // Клик теперь обрабатывается в setupBottomMenuButtons
+
                     this.closeBtn.onclick = () => this.closeModal();
                 }
 
                 openModal() {
+                    // Улучшенная проверка на инициализацию модального окна
+                    const modalElement = document.getElementById('stock-manager-modal');
+                    if (!modalElement || !this.listContainer) {
+                        console.error("Ошибка: Модальное окно 'Управление Товарами' не найдено или не инициализировано.");
+                        // Повторная попытка инициализации
+                        this.setupUI();
+                        this.modal = document.getElementById('stock-manager-modal');
+                        this.listContainer = document.getElementById('stock-manager-list');
+                        if (!this.modal) {
+                            window.alert("Критическая ошибка: Не удалось инициализировать модальное окно управления товарами.");
+                            return;
+                        }
+                    }
+
                     this.renderList();
                     this.modal.style.display = 'flex';
                 }
@@ -3894,6 +3971,12 @@
                 }
 
                 renderList() {
+                    // Проверка, что listContainer существует перед вставкой
+                    if (!this.listContainer) {
+                        console.error("Критическая ошибка: listContainer для AdminStockManager не найден.");
+                        return;
+                    }
+
                     this.listContainer.innerHTML = '';
                     let listHtml = '';
 
@@ -3963,7 +4046,7 @@
                     let editBtn = document.getElementById('edit-config-btn');
                     if (editBtn) editBtn.style.display = 'none';
                     if (document.getElementById('stock-manager-btn')) {
-                        document.getElementById('stock-manager-btn').style.display = 'none';
+                        document.getElementById('stock-manager-btn').remove();
                     }
                     return;
                 }
