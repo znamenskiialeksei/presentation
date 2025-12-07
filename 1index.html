@@ -2386,7 +2386,7 @@
             }, {
                 visible: true,
                 pulsing: true,
-                url: 'https://t.me/VasilisaVishivkaOtKutyur?text=Здравствуйте!%20Интересует%20украшение.',
+                url: 'https://t.me/@Vasilisaznamenskaya?text=Здравствуйте!%20Интересует%20украшение.',
                 icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#0088cc"/><text x="12" y="16" font-size="10" text-anchor="middle" fill="white">TG</text></svg>',
                 tooltip: 'Написать в Telegram',
                 top: '90%',
@@ -2466,7 +2466,7 @@
                             target: '_blank'
                         }, {
                             name: 'Написать в Telegram',
-                            url: 'https://t.me/VasilisaVishivkaOtKutyur?text=Здравствуйте!%20Интересует%20украшение.',
+                            url: 'https://t.me/@Vasilisaznamenskaya?text=Здравствуйте!%20Интересует%20украшение.',
                             target: '_blank'
                         }]
                     }]
@@ -3930,6 +3930,9 @@
 
             // --- УЛУЧШЕННАЯ ЛОГИКА КОНСТРУКТОРА ДЛЯ АДМИНА ---
             function setupAdminConstructor() {
+                // Мы переместили создание кнопки '📦 Управление Товарами' в конструктор AdminStockManager,
+                // чтобы она была гарантированно создана, если isAdmin = true.
+
                 if (!isAdmin) {
                     // Если не админ, скрываем все кнопки админки
                     document.getElementById('edit-config-btn').style.display = 'none';
@@ -3939,11 +3942,17 @@
                     return;
                 }
 
+                // Если это админ, убеждаемся, что кнопка Редактора Конфигурации видима.
+                const editBtn = document.getElementById('edit-config-btn');
+                if (editBtn) {
+                    editBtn.style.display = 'block';
+                }
+
                 let mainEditor, scratchpadEditor;
                 const LS_VERSIONS_KEY = 'configVersions';
                 const LS_SCRATCHPAD_KEY = 'scratchpadContent';
                 // --- Элементы основного редактора ---
-                const editBtn = document.getElementById('edit-config-btn');
+                // const editBtn = document.getElementById('edit-config-btn'); // уже определён
                 const modal = document.getElementById('admin-config-modal');
                 const mainTextarea = document.getElementById('config-textarea');
                 const saveForTestBtn = document.getElementById('save-config-btn');
@@ -4021,7 +4030,7 @@
                 }
 
                 // --- Логика основного редактора ---
-                editBtn.style.display = 'block';
+
                 editBtn.addEventListener('click', () => {
                     modal.style.display = 'flex';
 
@@ -4184,7 +4193,7 @@
                 const message = encodeURIComponent(`Здравствуйте! Хочу заказать через ${channel === 'telegram' ? 'Telegram' : 'WhatsApp'}: ` + productName);
 
                 if (channel === 'telegram') {
-                    window.open('https://t.me/VasilisaVishivkaOtKutyur?text=' + message, '_blank');
+                    window.open('https://t.me/@Vasilisaznamenskaya', '_blank');
                 } else if (channel === 'whatsapp') {
                     window.open('https://wa.me/79213047892?text=' + message, '_blank');
                 }
@@ -4193,14 +4202,14 @@
 
             // --- НОВАЯ ЛОГИКА: ССЫЛКИ ДЛЯ КНОПОК НИЖНЕГО МЕНЮ (ЗАДАЧА 1) ---
             telegramBtn.onclick = () => {
-                window.open('https://t.me/VasilisaVishivkaOtKutyur', '_blank');
+                window.open('https://t.me/@Vasilisaznamenskaya', '_blank');
             };
             whatsappBtn.onclick = () => {
                 window.open('https://wa.me/79213047892', '_blank');
             };
             instagramBtn.onclick = () => {
                 // Замените на фактическую ссылку на Instagram
-                window.open('https://www.instagram.com/vasilisa.luneville?igsh=a3JiM2p5bXR6ZnVv', '_blank');
+                window.open('https://www.instagram.com/vasilisaznamenskaya', '_blank');
             };
             // ---------------------------------------------------------------
 
