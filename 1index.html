@@ -1479,6 +1479,7 @@
             /* Минимальная высота, чтобы было удобно читать */
             padding-bottom: 80px;
             /* Отступ снизу, чтобы контент не перекрывался панелью управления */
+            width: 100%; /* ДОБАВЛЕНО: Гарантия ширины */
         }
 
         .feed-mode .controls {
@@ -1700,6 +1701,7 @@
             gap: 15px;
             margin-top: 15px;
             padding-bottom: 20px;
+            width: 100%; /* ДОБАВЛЕНО ИСПРАВЛЕНИЕ: Гарантия ширины */
         }
 
         .product-card {
@@ -4205,9 +4207,9 @@
                 const message = encodeURIComponent(`Здравствуйте! Хочу заказать через ${channel === 'telegram' ? 'Telegram' : 'WhatsApp'}: ` + productName);
 
                 if (channel === 'telegram') {
-                    window.open('https://t.me/Vasilisaznamenskaya?text=' + message, '_blank');
+                    window.open('https://t.me/Vasilisaznamenskaya', '_blank');
                 } else if (channel === 'whatsapp') {
-                    window.open('https://wa.me/79213047892?text=' + message, '_blank');
+                    window.open('https://wa.me/79213047892', '_blank');
                 }
                 // Instagram не используется для one-click заказа
             };
@@ -4436,6 +4438,17 @@
                         firstPageDetails.open = true;
                         // Принудительная прокрутка к первой странице
                         scrollToPage(1);
+                    }
+                    
+                    // ДОБАВЛЕНО ИСПРАВЛЕНИЕ: Открытие страницы 2 в режиме ленты при загрузке.
+                    // Страница 2 (В НАЛИЧИИ) - это каталог. Если она не была принудительно свернута,
+                    // и мы находимся в режиме ленты, принудительно открываем ее через таймаут
+                    const secondPageDetails = document.querySelector('.page[data-page-number="2"] details');
+                    if (secondPageDetails && !CONFIG.pages[1].collapsedOnLoad) {
+                        setTimeout(() => {
+                            secondPageDetails.open = true;
+                            scrollToPage(2);
+                        }, 500);
                     }
                 }
                 // --- КОНЕЦ ДОБАВЛЕНИЯ ДЛЯ ИСПРАВЛЕНИЯ ОТОБРАЖЕНИЯ В РЕЖИМЕ ЛЕНТЫ ---
