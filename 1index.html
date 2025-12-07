@@ -2490,7 +2490,7 @@
 
                 //==============================================================//
                 //=========== СТРАНИЦА 3: МАСТЕР-КЛАССЫ (С УМНЫМ ЗАПОЛНЕНИЕМ) ==//
-                // БЕЗ ИЗМЕНЕНИЙ
+                // БЕЗ ИЗМЕНЕНИЙ (Индекс 2)
                 //==============================================================//
                 {
                     published: true,
@@ -2652,6 +2652,7 @@
                 //==============================================================//
                 //=========== СТРАНИЦА 4: ПОД ЗАКАЗ (С УМНЫМ ЗАПОЛНЕНИЕМ) ======//
                 // Добавлено: уникальный id и метка isInStock: false для каждого товара
+                // ИСПРАВЛЕНИЕ ОШИБКИ СИНТАКСИСА: Заменяем IIFE на строковый маркер
                 //==============================================================//
                 {
                     published: true,
@@ -2830,12 +2831,8 @@
                         ]
                     },
                     // Генерация страницы 4 использует данные из configData
-                    text: (function () {
-                        // ПРИМЕЧАНИЕ: Этот код остается здесь, так как он выполняется в момент создания CONFIG,
-                        // но он ссылается только на свой собственный configData, который уже определен выше
-                        // (в пределах pages[3]), и поэтому является безопасным для исполнения.
-                        return generateSmartCatalog(defaultConfig.pages[3].configData, false);
-                    })(),
+                    // ИСПРАВЛЕНИЕ: Заменяем IIFE на строковый маркер
+                    text: '@@GENERATE_ORDER_CATALOG_FROM_CONFIG_DATA@@',
                     narrationEndTime: 0,
                 },
 
@@ -3039,7 +3036,8 @@
                 defaultConfigString = rawConfigBlock.substring(objectStartIndex, objectEndIndex + 1);
             } catch (e) {
                 console.error("Ошибка извлечения конфигурации из тега <script>:", e);
-                alert("Не удалось извлечь конфигурацию по умолчанию из HTML.");
+                // Используем пользовательское модальное окно вместо alert
+                window.alert("Не удалось извлечь конфигурацию по умолчанию из HTML.");
                 defaultConfigString = "{}"; // Аварийный вариант
             }
 
@@ -3056,26 +3054,39 @@
                 CONFIG = new Function('generateSmartCatalog', 'return ' + effectiveConfigString)(generateSmartCatalog);
             } catch (e) {
                 console.error('КРИТИЧЕСКАЯ ОШИБКА ПАРСИНГА КОНФИГУРАЦИИ:', e);
-                alert('Ошибка в синтаксисе конфигурации. Приложение не может быть запущено. Будет загружена пустая конфигурация.');
+                // Используем пользовательское модальное окно вместо alert
+                window.alert('Ошибка в синтаксисе конфигурации. Приложение не может быть запущено. Будет загружена пустая конфигурация.');
                 CONFIG = { pages: [], coverTexts: [], contactButtons: [], routeSelector: { routes: [] }, bottomMenuButtons: {}, productCardButtons: {} }; // Аварийный объект, чтобы избежать ошибок далее
             }
 
             // --- НОВЫЙ БЛОК: ПОСЛЕОБРАБОТКА ТЕКСТА (ИСПРАВЛЕНИЕ СИНТАКСИЧЕСКОЙ ОШИБКИ) ---
-            // Генерируем контент для Страницы 2 ("В НАЛИЧИИ"), которая зависит от Страницы 4 ("ПОД ЗАКАЗ")
-            if (CONFIG.pages && CONFIG.pages[1] && CONFIG.pages[1].text === '@@GENERATE_STOCK_CATALOG_FROM_PAGE_4@@') {
-                // Страница 4 находится по индексу 3 в массиве pages
-                const orderPage = CONFIG.pages[3];
-                if (orderPage && orderPage.configData) {
-                    const stockData = {
-                        header: "Украшения и аксессуары в наличии",
-                        subHeader: "Здесь вы можете выбрать готовые изделия, помеченные как 'В НАЛИЧИИ' администратором. Нажмите на раздел, чтобы увидеть товары.",
-                        categories: orderPage.configData.categories
-                    };
-                    // isStockPage: true включает фильтрацию по метке isInStock
-                    CONFIG.pages[1].text = generateSmartCatalog(stockData, true);
-                } else if (isAdmin) {
-                    // Дополнительная обработка на случай, если Страница 4 удалена
-                    adminErrors.push('Страница 2 (В НАЛИЧИИ) не смогла найти данные Страницы 4 (ПОД ЗАКАЗ). Проверьте структуру pages.');
+            if (CONFIG.pages) {
+                // Страница 2: В НАЛИЧИИ (Индекс 1)
+                if (CONFIG.pages[1] && CONFIG.pages[1].text === '@@GENERATE_STOCK_CATALOG_FROM_PAGE_4@@') {
+                    // Страница 4 находится по индексу 3
+                    const orderPage = CONFIG.pages[3];
+                    if (orderPage && orderPage.configData) {
+                        const stockData = {
+                            header: "Украшения и аксессуары в наличии",
+                            subHeader: "Здесь вы можете выбрать готовые изделия, помеченные как 'В НАЛИЧИИ' администратором. Нажмите на раздел, чтобы увидеть товары.",
+                            categories: orderPage.configData.categories
+                        };
+                        // isStockPage: true включает фильтрацию по метке isInStock
+                        CONFIG.pages[1].text = generateSmartCatalog(stockData, true);
+                    } else if (isAdmin) {
+                        adminErrors.push('Страница 2 (В НАЛИЧИИ) не смогла найти данные Страницы 4 (ПОД ЗАКАЗ). Проверьте структуру pages.');
+                    }
+                }
+
+                // Страница 4: ПОД ЗАКАЗ (Индекс 3)
+                if (CONFIG.pages[3] && CONFIG.pages[3].text === '@@GENERATE_ORDER_CATALOG_FROM_CONFIG_DATA@@') {
+                    const orderPage = CONFIG.pages[3];
+                    if (orderPage && orderPage.configData) {
+                        // isStockPage: false, так как это страница "ПОД ЗАКАЗ" (показываем все)
+                        CONFIG.pages[3].text = generateSmartCatalog(orderPage.configData, false);
+                    } else if (isAdmin) {
+                        adminErrors.push('Страница 4 (ПОД ЗАКАЗ) не имеет данных в configData. Проверьте структуру.');
+                    }
                 }
             }
             // ----------------------------------------------------------------------------------------------------
@@ -3552,7 +3563,8 @@
                             modalIframe.src = tempIframe.src;
                             modalIframe.style.display = 'block';
                         } else if (isAdmin) {
-                            alert('Ошибка в коде для blokiframe: ' + media.iframeCode);
+                            // Используем пользовательское модальное окно вместо alert
+                            window.alert('Ошибка в коде для blokiframe: ' + media.iframeCode);
                         }
                     } else if (media.type === 'photo') {
                         contentElement = modalPhoto;
@@ -3903,6 +3915,8 @@
                     localStorage.setItem('stockStatus', JSON.stringify(this.stockStatus));
 
                     // 2. Уведомляем пользователя (для подтверждения)
+                    console.log(`Товар ID: ${itemId}, Статус наличия: ${isChecked ? 'В НАЛИЧИИ' : 'ПОД ЗАКАЗ'}`);
+
                     // Используем пользовательское модальное окно вместо alert
                     if (window.confirm(`Статус товара "${itemId}" обновлен на "${isChecked ? 'В НАЛИЧИИ' : 'ПОД ЗАКАЗ'}".\nДля отображения изменений на СТРАНИЦЕ 2, необходимо перезагрузить приложение.\nПерезагрузить сейчас?`)) {
                         window.location.reload();
