@@ -334,6 +334,18 @@
         }
 
         /* --- СТИЛИ ДЛЯ СТРАНИЦ КОНТЕНТА ("КНИГИ") --- */
+        .page-viewer {
+            /* Добавлено для корректного отображения в режиме ленты */
+            width: 100%;
+            height: 100%;
+        }
+
+        .feed-mode .page-viewer {
+            /* В режиме ленты page-viewer должен быть просто блочным контейнером */
+            display: block;
+            overflow: visible;
+        }
+
         .page {
             /* Основной контейнер для одной страницы */
             position: relative;
@@ -4407,20 +4419,26 @@
                     coverView.style.setProperty('display', 'none', 'important');
                 }
 
-                // Показываем книгу (если не режим ленты, в ленте она и так видна)
-                if (!isFeedMode) {
-                    if (bookView) bookView.style.display = 'flex';
+                // --- ДОБАВЛЕНИЕ ДЛЯ ИСПРАВЛЕНИЯ ОТОБРАЖЕНИЯ В РЕЖИМЕ ЛЕНТЫ (ЗАДАЧА 4) ---
+                if (!isFeedMode) { 
+                    // Только в режиме "Книги" (не ленты) устанавливаем Flex
+                    if (bookView) bookView.style.display = 'flex'; 
                     // Активируем первую страницу
                     showPage(1);
                 } else {
+                    // В режиме ленты, убеждаемся, что bookView виден
+                    if (bookView) bookView.style.display = 'block'; 
                     // В режиме ленты просто убеждаемся, что мы не на обложке визуально
                     // и раскрываем первую страницу, если это требуется по логике
                     const firstPageDetails = document.querySelector('.page[data-page-number="1"] details');
                     // Если хотим, чтобы первая страница была открыта сразу в режиме без обложки
                     if (firstPageDetails) {
                         firstPageDetails.open = true;
+                        // Принудительная прокрутка к первой странице
+                        scrollToPage(1);
                     }
                 }
+                // --- КОНЕЦ ДОБАВЛЕНИЯ ДЛЯ ИСПРАВЛЕНИЯ ОТОБРАЖЕНИЯ В РЕЖИМЕ ЛЕНТЫ ---
 
                 // Обновляем состояние кнопок навигации, так как обложка скрыта
                 updateButtonsAndIndicator();
