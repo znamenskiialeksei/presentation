@@ -2858,7 +2858,7 @@
             <p>Укажите ссылку на товар из каталога, который вас заинтересовал, в сообщении ниже.</p>
             
             <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
-                <a href="https://t.me/@Vasilisaznamenskaya" target="_blank" style="text-decoration: none; background: #0088cc; color: white; padding: 10px 20px; border-radius: 5px; display: flex; align-items: center; gap: 5px;">
+                <a href="https://t.me/Vasilisaznamenskaya" target="_blank" style="text-decoration: none; background: #0088cc; color: white; padding: 10px 20px; border-radius: 5px; display: flex; align-items: center; gap: 5px;">
                     Telegram Канал
                 </a>
                 <a href="https://youtube.com/yourchannel" target="_blank" style="text-decoration: none; background: #FF0000; color: white; padding: 10px 20px; border-radius: 5px; display: flex; align-items: center; gap: 5px;">
@@ -4207,9 +4207,9 @@
                 const message = encodeURIComponent(`Здравствуйте! Хочу заказать через ${channel === 'telegram' ? 'Telegram' : 'WhatsApp'}: ` + productName);
 
                 if (channel === 'telegram') {
-                    window.open('https://t.me/Vasilisaznamenskaya', '_blank');
+                    window.open('https://t.me/Vasilisaznamenskaya?text=' + message, '_blank');
                 } else if (channel === 'whatsapp') {
-                    window.open('https://wa.me/79213047892', '_blank');
+                    window.open('https://wa.me/79213047892?text=' + message, '_blank');
                 }
                 // Instagram не используется для one-click заказа
             };
@@ -4450,6 +4450,43 @@
                             scrollToPage(2);
                         }, 500);
                     }
+                    
+                    // ==================================================================
+                    // === НОВОЕ ИСПРАВЛЕНИЕ ДЛЯ ОТКРЫТИЯ СТРАНИЦЫ 2 В РЕЖИМЕ ЛЕНТЫ ===
+                    // ==================================================================
+                    // Поскольку страница 2 (В НАЛИЧИИ) в данном конфиге collapsedOnLoad: true, 
+                    // но при этом не имеет времени narrationEndTime (0), она никогда не открывается 
+                    // автоматически, если не нажата кнопка Play/Pause.
+                    // Если обложка скрыта, и мы в режиме ленты, необходимо убедиться, что
+                    // хотя бы одна страница открыта для просмотра контента.
+                    
+                    // Проверяем, что Страница 2 существует и разрешена к свертыванию
+                    if (CONFIG.pages[1] && CONFIG.pages[1].published && CONFIG.pages[1].collapsible) {
+                         const page2Element = document.querySelector('.page[data-page-number="2"] details');
+                         if (page2Element) {
+                            // Принудительное открытие страницы 2, если она не была открыта автоматически
+                            // из-за отсутствия audio cue или принудительно не свернута админом
+                            // NOTE: Так как collapsedOnLoad: true, мы её оставляем свернутой, но
+                            // если бы она была collapsedOnLoad: false (по умолчанию), это бы её открыло.
+                            // Для решения проблемы "ничего не отображается" мы принудительно 
+                            // открываем первую страницу, а остальные оставляем как есть.
+                            // Но если пользователь хочет, чтобы сразу был виден каталог "В НАЛИЧИИ" (Страница 2),
+                            // мы должны игнорировать collapsedOnLoad: true, если обложка скрыта.
+                            
+                            // *** Принудительно открываем Страницу 2 в режиме ленты, если обложка скрыта ***
+                            // ВАЖНО: Это переопределяет collapsedOnLoad: true для этой конкретной ситуации.
+                            // Если пользователь захочет, чтобы она оставалась свернутой, он может
+                            // установить collapsedOnLoad: true и управлять ею вручную.
+                            
+                            // Убеждаемся, что Страница 2 видна
+                            page2Element.open = true;
+                            // Прокручиваем к ней (полезно, если Стр. 1 очень короткая)
+                            // scrollToPage(2); // Закомментировано, чтобы не прыгать слишком сильно.
+                         }
+                    }
+                    // ==================================================================
+                    
+                    
                 }
                 // --- КОНЕЦ ДОБАВЛЕНИЯ ДЛЯ ИСПРАВЛЕНИЯ ОТОБРАЖЕНИЯ В РЕЖИМЕ ЛЕНТЫ ---
 
