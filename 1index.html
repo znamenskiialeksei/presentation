@@ -334,18 +334,6 @@
         }
 
         /* --- СТИЛИ ДЛЯ СТРАНИЦ КОНТЕНТА ("КНИГИ") --- */
-        .page-viewer {
-            /* Добавлено для корректного отображения в режиме ленты */
-            width: 100%;
-            height: 100%;
-        }
-
-        .feed-mode .page-viewer {
-            /* В режиме ленты page-viewer должен быть просто блочным контейнером */
-            display: block;
-            overflow: visible;
-        }
-
         .page {
             /* Основной контейнер для одной страницы */
             position: relative;
@@ -1479,7 +1467,6 @@
             /* Минимальная высота, чтобы было удобно читать */
             padding-bottom: 80px;
             /* Отступ снизу, чтобы контент не перекрывался панелью управления */
-            width: 100%; /* ДОБАВЛЕНО: Гарантия ширины */
         }
 
         .feed-mode .controls {
@@ -1701,7 +1688,6 @@
             gap: 15px;
             margin-top: 15px;
             padding-bottom: 20px;
-            width: 100%; /* ДОБАВЛЕНО ИСПРАВЛЕНИЕ: Гарантия ширины */
         }
 
         .product-card {
@@ -2489,7 +2475,7 @@
                 {
                     published: true,
                     collapsedOnLoad: true,
-                    collapsible: true,
+                    collapsible: false,
                     customHeight: 'auto',
                     // ИСПОЛЬЗУЕМ ФУНКЦИЮ generateSmartCatalog ДЛЯ АВТОМАТИЧЕСКОГО СОЗДАНИЯ HTML
                     // МАРКЕР: Текст будет сгенерирован в main.js после полной загрузки CONFIG
@@ -2858,7 +2844,7 @@
             <p>Укажите ссылку на товар из каталога, который вас заинтересовал, в сообщении ниже.</p>
             
             <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
-                <a href="https://t.me/Vasilisaznamenskaya" target="_blank" style="text-decoration: none; background: #0088cc; color: white; padding: 10px 20px; border-radius: 5px; display: flex; align-items: center; gap: 5px;">
+                <a href="https://t.me/@Vasilisaznamenskaya" target="_blank" style="text-decoration: none; background: #0088cc; color: white; padding: 10px 20px; border-radius: 5px; display: flex; align-items: center; gap: 5px;">
                     Telegram Канал
                 </a>
                 <a href="https://youtube.com/yourchannel" target="_blank" style="text-decoration: none; background: #FF0000; color: white; padding: 10px 20px; border-radius: 5px; display: flex; align-items: center; gap: 5px;">
@@ -4421,74 +4407,20 @@
                     coverView.style.setProperty('display', 'none', 'important');
                 }
 
-                // --- ДОБАВЛЕНИЕ ДЛЯ ИСПРАВЛЕНИЯ ОТОБРАЖЕНИЯ В РЕЖИМЕ ЛЕНТЫ (ЗАДАЧА 4) ---
-                if (!isFeedMode) { 
-                    // Только в режиме "Книги" (не ленты) устанавливаем Flex
-                    if (bookView) bookView.style.display = 'flex'; 
+                // Показываем книгу (если не режим ленты, в ленте она и так видна)
+                if (!isFeedMode) {
+                    if (bookView) bookView.style.display = 'flex';
                     // Активируем первую страницу
                     showPage(1);
                 } else {
-                    // В режиме ленты, убеждаемся, что bookView виден
-                    if (bookView) bookView.style.display = 'block'; 
                     // В режиме ленты просто убеждаемся, что мы не на обложке визуально
                     // и раскрываем первую страницу, если это требуется по логике
                     const firstPageDetails = document.querySelector('.page[data-page-number="1"] details');
                     // Если хотим, чтобы первая страница была открыта сразу в режиме без обложки
                     if (firstPageDetails) {
                         firstPageDetails.open = true;
-                        // Принудительная прокрутка к первой странице
-                        scrollToPage(1);
                     }
-                    
-                    // ДОБАВЛЕНО ИСПРАВЛЕНИЕ: Открытие страницы 2 в режиме ленты при загрузке.
-                    // Страница 2 (В НАЛИЧИИ) - это каталог. Если она не была принудительно свернута,
-                    // и мы находимся в режиме ленты, принудительно открываем ее через таймаут
-                    const secondPageDetails = document.querySelector('.page[data-page-number="2"] details');
-                    if (secondPageDetails && !CONFIG.pages[1].collapsedOnLoad) {
-                        setTimeout(() => {
-                            secondPageDetails.open = true;
-                            scrollToPage(2);
-                        }, 500);
-                    }
-                    
-                    // ==================================================================
-                    // === НОВОЕ ИСПРАВЛЕНИЕ ДЛЯ ОТКРЫТИЯ СТРАНИЦЫ 2 В РЕЖИМЕ ЛЕНТЫ ===
-                    // ==================================================================
-                    // Поскольку страница 2 (В НАЛИЧИИ) в данном конфиге collapsedOnLoad: true, 
-                    // но при этом не имеет времени narrationEndTime (0), она никогда не открывается 
-                    // автоматически, если не нажата кнопка Play/Pause.
-                    // Если обложка скрыта, и мы в режиме ленты, необходимо убедиться, что
-                    // хотя бы одна страница открыта для просмотра контента.
-                    
-                    // Проверяем, что Страница 2 существует и разрешена к свертыванию
-                    if (CONFIG.pages[1] && CONFIG.pages[1].published && CONFIG.pages[1].collapsible) {
-                         const page2Element = document.querySelector('.page[data-page-number="2"] details');
-                         if (page2Element) {
-                            // Принудительное открытие страницы 2, если она не была открыта автоматически
-                            // из-за отсутствия audio cue или принудительно не свернута админом
-                            // NOTE: Так как collapsedOnLoad: true, мы её оставляем свернутой, но
-                            // если бы она была collapsedOnLoad: false (по умолчанию), это бы её открыло.
-                            // Для решения проблемы "ничего не отображается" мы принудительно 
-                            // открываем первую страницу, а остальные оставляем как есть.
-                            // Но если пользователь хочет, чтобы сразу был виден каталог "В НАЛИЧИИ" (Страница 2),
-                            // мы должны игнорировать collapsedOnLoad: true, если обложка скрыта.
-                            
-                            // *** Принудительно открываем Страницу 2 в режиме ленты, если обложка скрыта ***
-                            // ВАЖНО: Это переопределяет collapsedOnLoad: true для этой конкретной ситуации.
-                            // Если пользователь захочет, чтобы она оставалась свернутой, он может
-                            // установить collapsedOnLoad: true и управлять ею вручную.
-                            
-                            // Убеждаемся, что Страница 2 видна
-                            page2Element.open = true;
-                            // Прокручиваем к ней (полезно, если Стр. 1 очень короткая)
-                            // scrollToPage(2); // Закомментировано, чтобы не прыгать слишком сильно.
-                         }
-                    }
-                    // ==================================================================
-                    
-                    
                 }
-                // --- КОНЕЦ ДОБАВЛЕНИЯ ДЛЯ ИСПРАВЛЕНИЯ ОТОБРАЖЕНИЯ В РЕЖИМЕ ЛЕНТЫ ---
 
                 // Обновляем состояние кнопок навигации, так как обложка скрыта
                 updateButtonsAndIndicator();
