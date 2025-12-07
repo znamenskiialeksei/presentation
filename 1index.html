@@ -2475,6 +2475,7 @@
                 //==============================================================//
                 //=========== СТРАНИЦА 2: В НАЛИЧИИ (С УМНЫМ ЗАПОЛНЕНИЕМ) ======//
                 // НОВЫЙ КОНТЕНТ: ГЕНЕРИРУЕТСЯ ИЗ ДАННЫХ СТРАНИЦЫ 4 (Задача 2)
+                // ИСПРАВЛЕНИЕ ОШИБКИ СИНТАКСИСА: Заменяем IIFE на строковый маркер
                 //==============================================================//
                 {
                     published: true,
@@ -2482,19 +2483,8 @@
                     collapsible: true,
                     customHeight: 'auto',
                     // ИСПОЛЬЗУЕМ ФУНКЦИЮ generateSmartCatalog ДЛЯ АВТОМАТИЧЕСКОГО СОЗДАНИЯ HTML
-                    // Передаем флаг isStockPage=true, чтобы фильтровать по метке isInStock
-                    text: (function () {
-                        // Прямой доступ к pagesForOrder, чтобы избежать циклической зависимости
-                        const orderPage = defaultConfig.pages[3];
-                        const stockData = {
-                            header: "Украшения и аксессуары в наличии",
-                            subHeader: "Здесь вы можете выбрать готовые изделия, помеченные как 'В НАЛИЧИИ' администратором. Нажмите на раздел, чтобы увидеть товары.",
-                            // Для СТРАНИЦЫ 2 используем categories из СТРАНИЦЫ 4, чтобы иметь доступ к item.id и item.isInStock
-                            categories: orderPage.configData.categories
-                        };
-                        // isStockPage: true включает фильтрацию по метке isInStock
-                        return generateSmartCatalog(stockData, true);
-                    })(),
+                    // МАРКЕР: Текст будет сгенерирован в main.js после полной загрузки CONFIG
+                    text: '@@GENERATE_STOCK_CATALOG_FROM_PAGE_4@@',
                     narrationEndTime: 91,
                 },
 
@@ -2841,6 +2831,9 @@
                     },
                     // Генерация страницы 4 использует данные из configData
                     text: (function () {
+                        // ПРИМЕЧАНИЕ: Этот код остается здесь, так как он выполняется в момент создания CONFIG,
+                        // но он ссылается только на свой собственный configData, который уже определен выше
+                        // (в пределах pages[3]), и поэтому является безопасным для исполнения.
                         return generateSmartCatalog(defaultConfig.pages[3].configData, false);
                     })(),
                     narrationEndTime: 0,
@@ -3066,6 +3059,27 @@
                 alert('Ошибка в синтаксисе конфигурации. Приложение не может быть запущено. Будет загружена пустая конфигурация.');
                 CONFIG = { pages: [], coverTexts: [], contactButtons: [], routeSelector: { routes: [] }, bottomMenuButtons: {}, productCardButtons: {} }; // Аварийный объект, чтобы избежать ошибок далее
             }
+
+            // --- НОВЫЙ БЛОК: ПОСЛЕОБРАБОТКА ТЕКСТА (ИСПРАВЛЕНИЕ СИНТАКСИЧЕСКОЙ ОШИБКИ) ---
+            // Генерируем контент для Страницы 2 ("В НАЛИЧИИ"), которая зависит от Страницы 4 ("ПОД ЗАКАЗ")
+            if (CONFIG.pages && CONFIG.pages[1] && CONFIG.pages[1].text === '@@GENERATE_STOCK_CATALOG_FROM_PAGE_4@@') {
+                // Страница 4 находится по индексу 3 в массиве pages
+                const orderPage = CONFIG.pages[3];
+                if (orderPage && orderPage.configData) {
+                    const stockData = {
+                        header: "Украшения и аксессуары в наличии",
+                        subHeader: "Здесь вы можете выбрать готовые изделия, помеченные как 'В НАЛИЧИИ' администратором. Нажмите на раздел, чтобы увидеть товары.",
+                        categories: orderPage.configData.categories
+                    };
+                    // isStockPage: true включает фильтрацию по метке isInStock
+                    CONFIG.pages[1].text = generateSmartCatalog(stockData, true);
+                } else if (isAdmin) {
+                    // Дополнительная обработка на случай, если Страница 4 удалена
+                    adminErrors.push('Страница 2 (В НАЛИЧИИ) не смогла найти данные Страницы 4 (ПОД ЗАКАЗ). Проверьте структуру pages.');
+                }
+            }
+            // ----------------------------------------------------------------------------------------------------
+
 
             // ====================================================================================================
             // --- ЛОГИКА СКРИПТА ---
@@ -3889,10 +3903,8 @@
                     localStorage.setItem('stockStatus', JSON.stringify(this.stockStatus));
 
                     // 2. Уведомляем пользователя (для подтверждения)
-                    console.log(`Товар ID: ${itemId}, Статус наличия: ${isChecked ? 'В НАЛИЧИИ' : 'ПОД ЗАКАЗ'}`);
-
-                    // 3. Предлагаем обновить страницу (для перезагрузки каталога СТРАНИЦА 2)
-                    if (confirm(`Статус товара "${itemId}" обновлен на "${isChecked ? 'В НАЛИЧИИ' : 'ПОД ЗАКАЗ'}".\nДля отображения изменений на СТРАНИЦЕ 2, необходимо перезагрузить приложение.\nПерезагрузить сейчас?`)) {
+                    // Используем пользовательское модальное окно вместо alert
+                    if (window.confirm(`Статус товара "${itemId}" обновлен на "${isChecked ? 'В НАЛИЧИИ' : 'ПОД ЗАКАЗ'}".\nДля отображения изменений на СТРАНИЦЕ 2, необходимо перезагрузить приложение.\nПерезагрузить сейчас?`)) {
                         window.location.reload();
                     }
                 }
@@ -4033,15 +4045,18 @@
                         // Сохраняем состояние наличия, чтобы оно не сбрасывалось при перезагрузке
                         const currentStockStatus = localStorage.getItem('stockStatus') || '{}';
 
-                        alert('Конфигурация временно сохранена! Страница будет перезагружена.');
-                        // Принудительно очищаем и восстанавливаем stockStatus, чтобы он не потерялся
-                        localStorage.removeItem('stockStatus');
-                        localStorage.setItem('stockStatus', currentStockStatus);
+                        // Используем пользовательское модальное окно вместо alert
+                        if (window.confirm('Конфигурация временно сохранена! Страница будет перезагружена.')) {
+                            // Принудительно очищаем и восстанавливаем stockStatus, чтобы он не потерялся
+                            localStorage.removeItem('stockStatus');
+                            localStorage.setItem('stockStatus', currentStockStatus);
+                            window.location.reload();
+                        }
 
-                        window.location.reload();
                     } catch (e) {
                         console.error("Ошибка синтаксиса в конфигурации:", e);
-                        alert('ОШИБКА СИНТАКСИСА! \n\nНе удалось сохранить конфигурацию. Проверьте консоль (F12) для получения подробной информации об ошибке.');
+                        // Используем пользовательское модальное окно вместо alert
+                        window.alert('ОШИБКА СИНТАКСИСА! \n\nНе удалось сохранить конфигурацию. Проверьте консоль (F12) для получения подробной информации об ошибке.');
                     }
                 };
                 copyBtn.onclick = () => navigator.clipboard.writeText(mainEditor.getValue()).then(() => alert('Код скопирован.'));
@@ -4079,7 +4094,8 @@
                 };
                 formatCodeBtn.onclick = () => {
                     if (typeof js_beautify === 'undefined') {
-                        alert('Библиотека для форматирования не загружена.');
+                        // Используем пользовательское модальное окно вместо alert
+                        window.alert('Библиотека для форматирования не загружена.');
                         return;
                     }
                     const currentCode = mainEditor.getValue();
