@@ -4193,7 +4193,7 @@
                 const message = encodeURIComponent(`Здравствуйте! Хочу заказать через ${channel === 'telegram' ? 'Telegram' : 'WhatsApp'}: ` + productName);
 
                 if (channel === 'telegram') {
-                    window.open('https://t.me/Vasilisaznamenskaya', '_blank');
+                    window.open('https://t.me/Vasilisaznamenskaya?text=' + message, '_blank');
                 } else if (channel === 'whatsapp') {
                     window.open('https://wa.me/79213047892?text=' + message, '_blank');
                 }
