@@ -334,6 +334,23 @@
         }
 
         /* --- СТИЛИ ДЛЯ СТРАНИЦ КОНТЕНТА ("КНИГИ") --- */
+        .page-viewer {
+            /* Добавлено для корректного отображения в режиме ленты */
+            width: 100%;
+            height: 100%;
+        }
+
+        .feed-mode .page-viewer {
+            /* В режиме ленты page-viewer должен быть просто блочным контейнером */
+            display: block;
+            overflow: visible;
+            /* === ДОБАВЛЕНО ИСПРАВЛЕНИЕ #3 (Из предыдущего ответа) === */
+            /* Гарантирует, что контейнер страниц не будет сжиматься Flexbox-ом */
+            height: auto !important;
+            min-height: 100%;
+        }
+
+
         .page {
             /* Основной контейнер для одной страницы */
             position: relative;
@@ -361,6 +378,16 @@
             background: white;
             /* Белый фон страницы */
         }
+        
+        /* === ДОБАВЛЕНО ИСПРАВЛЕНИЕ #4 (Для отображения контента в открытой странице) === */
+        .feed-mode .page {
+            /* Запрещаем сжатие страницы, чтобы она корректно растягивалась в вертикальной ленте */
+            flex-shrink: 0;
+            width: 100%; /* Убедимся, что занимает всю ширину */
+            /* Восстанавливаем высоту для режима ленты */
+            height: auto; 
+        }
+        /* ============================================================================== */
 
         .page.active {
             /* Класс для активной (видимой) страницы */
@@ -395,6 +422,23 @@
             box-sizing: border-box;
             /* padding не увеличивает ширину */
         }
+        
+        /* === ДОБАВЛЕНИЕ ДЛЯ ФИКСА ПРОБЛЕМЫ С НУЛЕВОЙ ВЫСОТОЙ В МОБИЛЬНОЙ ЛЕНТЕ === */
+        .feed-mode .page p {
+            /* Устанавливаем минимальную высоту и убираем жесткое ограничение Flexbox, чтобы контент был виден */
+            min-height: 50vh; 
+            height: auto !important;
+            overflow-y: visible; /* Разрешаем родительскому body/page-viewer обрабатывать прокрутку */
+        }
+
+        .feed-mode .page p:empty {
+            /* Если контента нет, схлопываем элемент */
+            min-height: 0;
+            height: 0 !important;
+            padding: 0;
+            margin: 0;
+        }
+        /* ============================================================================== */
 
         .page-buttons-container {
             /* Контейнер для кнопок (Фото, Видео и т.д.) на странице */
@@ -1153,7 +1197,7 @@
             color: white;
             /* Белый цвет иконки/текста */
             border: none;
-            /* Без рамки */
+            /* Убирает рамку */
             border-radius: 50%;
             /* Круглая форма */
             cursor: pointer;
@@ -1448,6 +1492,16 @@
             height: auto;
             /* Высота по контенту */
         }
+        
+        /* === ДОБАВЛЕНО ИСПРАВЛЕНИЕ #4 (Для отображения контента в открытой странице) === */
+        .feed-mode .page {
+            /* Запрещаем сжатие страницы, чтобы она корректно растягивалась в вертикальной ленте */
+            flex-shrink: 0;
+            width: 100%; /* Убедимся, что занимает всю ширину */
+            /* Восстанавливаем высоту для режима ленты */
+            height: auto; 
+        }
+        /* ============================================================================== */
 
         .feed-mode .page details {
             /* Используется тег <details> для создания сворачиваемых блоков */
@@ -1467,6 +1521,7 @@
             /* Минимальная высота, чтобы было удобно читать */
             padding-bottom: 80px;
             /* Отступ снизу, чтобы контент не перекрывался панелью управления */
+            width: 100%; /* ДОБАВЛЕНО: Гарантия ширины */
         }
 
         .feed-mode .controls {
@@ -1688,7 +1743,15 @@
             gap: 15px;
             margin-top: 15px;
             padding-bottom: 20px;
+            width: 100%; /* ДОБАВЛЕНО ИСПРАВЛЕНИЕ: Гарантия ширины */
         }
+        
+        /* === ДОБАВЛЕНО ИСПРАВЛЕНИЕ ДЛЯ ПРОБЛЕМЫ С МОБИЛЬНОЙ ЛЕНТОЙ (из предыдущего ответа) === */
+        /* Гарантирует, что сетка товаров внутри <details> в режиме ленты имеет достаточную высоту */
+        .feed-mode .product-grid {
+            min-height: 100px;
+        }
+        /* ============================================================= */
 
         .product-card {
             background: #fff;
@@ -2260,7 +2323,7 @@
 
             // true: показывать обложку при загрузке.
             // false: пропускать обложку и сразу открывать первую страницу.
-            showCover: false,
+            showCover: true,
 
             // true: после окончания аудио на последней странице, плеер начнет воспроизведение с первой.
             // false: воспроизведение остановится после окончания последней страницы.
@@ -2474,8 +2537,8 @@
                 //==============================================================//
                 {
                     published: true,
-                    collapsedOnLoad: true,
-                    collapsible: false,
+                    collapsedOnLoad: false, // ИЗМЕНЕНО: Открыта по умолчанию, как вы просили
+                    collapsible: true,
                     customHeight: 'auto',
                     // ИСПОЛЬЗУЕМ ФУНКЦИЮ generateSmartCatalog ДЛЯ АВТОМАТИЧЕСКОГО СОЗДАНИЯ HTML
                     // МАРКЕР: Текст будет сгенерирован в main.js после полной загрузки CONFIG
@@ -2555,7 +2618,7 @@
                                                 header: "Раскупили за 1 час 8",
                                                 slideText: "Коллекция на базе этого дизайна была продана на ярмарке за первый час. 9",
                                                 speakerScript: "Моя экспертиза в том, что я знаю, что покупают люди10. Дизайн \"Фейерверк\" — это магнит. На последней ярмарке стенд опустел за час. Это украшение продает само себя.",
-                                                media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5280.MOV",
+                                                media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/video_2025.mp4", // Placeholder file name inferred
                                                 mediaType: "video",
                                                 backgroundPrompt: "Soft focus image of pearl necklace on silk table, extreme close up background, creamy tones, rich texture, old money aesthetic, sophisticated --ar 9:16"
                                             },
@@ -2565,8 +2628,8 @@
                                                 header: "Окупаемость: 2 изделия 11",
                                                 slideText: "Стоимость МК: 50 EUR 12<br><br>Инвестиция, которая вернется мгновенно.",
                                                 speakerScript: "Цена мастер-класса — всего 50 евро. Чтобы \"отбить\" эти вложения и выйти в плюс, вам достаточно продать всего два кольца, сделанных по этому уроку.",
-                                                media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/video_2025.mp4", // Placeholder file name inferred
-                                                mediaType: "video",
+                                                media: "https://raw.githubusercontent.com/znamenskiialeksei/presentation/main/IMG_5277.jpg",
+                                                mediaType: "image",
                                                 backgroundPrompt: "Morning sunlight passing through sheer curtains, soft shadows on a beige wall, cozy and expensive atmosphere, minimalist background --ar 9:16"
                                             },
                                             {
@@ -4413,13 +4476,35 @@
                     // Активируем первую страницу
                     showPage(1);
                 } else {
-                    // В режиме ленты просто убеждаемся, что мы не на обложке визуально
+                    // В режиме ленты просто убеждаемся, что bookView виден
+                    if (bookView) bookView.style.display = 'block'; 
+                    
                     // и раскрываем первую страницу, если это требуется по логике
                     const firstPageDetails = document.querySelector('.page[data-page-number="1"] details');
+                    
                     // Если хотим, чтобы первая страница была открыта сразу в режиме без обложки
                     if (firstPageDetails) {
                         firstPageDetails.open = true;
+                        // Принудительная прокрутка к первой странице
+                        scrollToPage(1);
                     }
+                    
+                    // ==================================================================
+                    // === ВОССТАНОВЛЕННОЕ ИСПРАВЛЕНИЕ ДЛЯ ОТКРЫТИЯ СТРАНИЦЫ 2 В РЕЖИМЕ ЛЕНТЫ ===
+                    // Страница 2 (Индекс 1) - это каталог. Если обложка скрыта (CONFIG.showCover: false),
+                    // и мы в режиме ленты (isFeedMode: true), нам нужно явно открыть ее,
+                    // так как collapsedOnLoad: true не даст ей открыться по умолчанию.
+                    // ==================================================================
+                    // Проверяем, что Страница 2 существует и разрешена к свертыванию
+                    if (CONFIG.pages[1] && CONFIG.pages[1].published && CONFIG.pages[1].collapsible) {
+                         const page2Element = document.querySelector('.page[data-page-number="2"] details');
+                         if (page2Element) {
+                            // Принудительное открытие страницы 2
+                            page2Element.open = true;
+                         }
+                    }
+                    // ==================================================================
+                    
                 }
 
                 // Обновляем состояние кнопок навигации, так как обложка скрыта
