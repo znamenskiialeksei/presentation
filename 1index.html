@@ -1475,6 +1475,16 @@
             height: auto;
             /* Высота по контенту */
         }
+        
+        /* === ДОБАВЛЕНО ИСПРАВЛЕНИЕ #4 (Для отображения контента в открытой странице) === */
+        .feed-mode .page {
+            /* Запрещаем сжатие страницы, чтобы она корректно растягивалась в вертикальной ленте */
+            flex-shrink: 0;
+            width: 100%; /* Убедимся, что занимает всю ширину */
+            /* Восстанавливаем высоту для режима ленты */
+            height: auto; 
+        }
+        /* ============================================================================== */
 
         .feed-mode .page details {
             /* Используется тег <details> для создания сворачиваемых блоков */
@@ -2256,7 +2266,7 @@
 
                             // 1. Кнопка Описание
                             if (productCardButtons.description) {
-                                buttonsHtml += `<button class="desc-btn" onclick="event.stopPropagation(); window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${videoUrl}', '${safeMedia}', '${safePresentation}')">Описание</button>`;
+                                buttonsHtml += `<button class="desc-btn" onclick="event.stopPropagation(); window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}', '${safeMedia}', '${safePresentation}')">Описание</button>`;
                             }
 
                             // 2. Кнопка Заказать через Telegram
@@ -2271,7 +2281,7 @@
                             // --- Конец логики кнопок карточки ---
 
                             html += `
-                        <div class="product-card" onclick="window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${videoUrl}', '${safeMedia}', '${safePresentation}')">
+                        <div class="product-card" onclick="window.showProductDetails('${jsSafeTitle}', '${safePrice}', '${safeDesc}', '${safeImage}', '${safeVideo}', '${safeMedia}', '${safePresentation}')">
                             <img src="${safeImage}" alt="${safeTitle}">
                             <h3>${safeTitle}</h3>
                             <p class="price">${safePrice}</p>
@@ -2510,7 +2520,7 @@
                 //==============================================================//
                 {
                     published: true,
-                    collapsedOnLoad: true, // ВОССТАНОВЛЕНО
+                    collapsedOnLoad: true, // ИСХОДНОЕ ЗНАЧЕНИЕ ВОССТАНОВЛЕНО
                     collapsible: true,
                     customHeight: 'auto',
                     // ИСПОЛЬЗУЕМ ФУНКЦИЮ generateSmartCatalog ДЛЯ АВТОМАТИЧЕСКОГО СОЗДАНИЯ HTML
@@ -2639,7 +2649,7 @@
                                 name: "Индивидуальное обучение вышивке",
                                 items: [
                                     { id: 'ind-nastavnichestvo', title: "Наставничество", price: 15000, currency: "р", image: "https://via.placeholder.com/150", description: "Личное ведение." },
-                                    { id: 'ind-разбор', title: "Разбор", price: 5000, currency: "р", image: "https://via.placeholder.com/150", description: "Разбор профиля." },
+                                    { id: 'ind-razbor', title: "Разбор", price: 5000, currency: "р", image: "https://via.placeholder.com/150", description: "Разбор профиля." },
                                     { id: 'ind-konsultatsiya', title: "Консультация", price: 3000, currency: "р", image: "https://via.placeholder.com/150", description: "Ответы на вопросы." },
                                     { id: 'ind-urok-live', title: "Урок Live", price: 4000, currency: "р", image: "https://via.placeholder.com/150", description: "Живой урок." },
                                     { id: 'ind-audit', title: "Аудит", price: 3000, currency: "р", image: "https://via.placeholder.com/150", description: "Аудит бренда." }
