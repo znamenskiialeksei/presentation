@@ -3828,10 +3828,15 @@
 
                 setupUI() {
                     if (!isAdmin) return;
-                    const managerBtn = document.createElement('button');
-                    managerBtn.id = 'stock-manager-btn';
-                    managerBtn.textContent = '📦 Управление Товарами';
-                    document.body.appendChild(managerBtn);
+
+                    // Проверяем, существует ли кнопка, иначе создаем ее
+                    let managerBtn = document.getElementById('stock-manager-btn');
+                    if (!managerBtn) {
+                        managerBtn = document.createElement('button');
+                        managerBtn.id = 'stock-manager-btn';
+                        managerBtn.textContent = '📦 Управление Товарами';
+                        document.body.appendChild(managerBtn);
+                    }
 
                     // Создание модального окна, если его еще нет
                     if (!this.modal) {
@@ -3930,31 +3935,45 @@
 
             // --- УЛУЧШЕННАЯ ЛОГИКА КОНСТРУКТОРА ДЛЯ АДМИНА ---
             function setupAdminConstructor() {
-                // Мы переместили создание кнопки '📦 Управление Товарами' в конструктор AdminStockManager,
-                // чтобы она была гарантированно создана, если isAdmin = true.
 
                 if (!isAdmin) {
                     // Если не админ, скрываем все кнопки админки
-                    document.getElementById('edit-config-btn').style.display = 'none';
+                    let editBtn = document.getElementById('edit-config-btn');
+                    if (editBtn) editBtn.style.display = 'none';
                     if (document.getElementById('stock-manager-btn')) {
                         document.getElementById('stock-manager-btn').style.display = 'none';
                     }
                     return;
                 }
 
-                // Если это админ, убеждаемся, что кнопка Редактора Конфигурации видима.
-                const editBtn = document.getElementById('edit-config-btn');
-                if (editBtn) {
+                // 1. Находим или создаем кнопку "Редактор Конфигурации"
+                let editBtn = document.getElementById('edit-config-btn');
+
+                if (!editBtn) {
+                    editBtn = document.createElement('button');
+                    editBtn.id = 'edit-config-btn';
+                    editBtn.textContent = '⚙️ Редактор Конфигурации';
+                    editBtn.className = 'admin-modal-buttons'; // Используем класс для стилей
+                    editBtn.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 10001; background-color: #007bff; color: white; border: none; border-radius: 8px; padding: 12px 18px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); transition: transform 0.2s, background-color 0.2s;'; // Вставляем инлайн стили как в CSS
+                    document.body.appendChild(editBtn);
+                    // ВНИМАНИЕ: Стили для кнопки "Управление Товарами" теперь в CSS (bottom: 80px), чтобы не перекрывались.
+                } else {
                     editBtn.style.display = 'block';
                 }
 
+                // 2. Инициализация остальных элементов (Предполагаем, что они есть в HTML)
                 let mainEditor, scratchpadEditor;
                 const LS_VERSIONS_KEY = 'configVersions';
                 const LS_SCRATCHPAD_KEY = 'scratchpadContent';
-                // --- Элементы основного редактора ---
-                // const editBtn = document.getElementById('edit-config-btn'); // уже определён
+
                 const modal = document.getElementById('admin-config-modal');
                 const mainTextarea = document.getElementById('config-textarea');
+                if (!modal || !mainTextarea) {
+                    console.warn('ВНИМАНИЕ: Отсутствуют элементы модального окна Редактора Конфигурации (admin-config-modal). Редактор работать не будет.');
+                    editBtn.title = 'ОШИБКА: Отсутствуют элементы модального окна в HTML.';
+                    return;
+                }
+
                 const saveForTestBtn = document.getElementById('save-config-btn');
                 const copyBtn = document.getElementById('copy-config-btn');
                 const closeBtn = document.getElementById('close-config-btn');
@@ -4032,6 +4051,7 @@
                 // --- Логика основного редактора ---
 
                 editBtn.addEventListener('click', () => {
+
                     modal.style.display = 'flex';
 
                     // --- ИЗМЕНЕНИЕ #2: Всегда загружать актуальный код в редактор ---
@@ -4416,7 +4436,7 @@
                 } else {
                     // В режиме ленты просто убеждаемся, что мы не на обложке визуально
                     // и раскрываем первую страницу, если это требуется по логике
-                    const firstPageDetails = document.querySelector('.page[data-page-number="1"] details');
+                    const firstPageDetails = document.querySelector(`.page[data-page-number="1"] details`);
                     // Если хотим, чтобы первая страница была открыта сразу в режиме без обложки
                     if (firstPageDetails) {
                         firstPageDetails.open = true;
