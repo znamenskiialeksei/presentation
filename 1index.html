@@ -344,7 +344,7 @@
             /* В режиме ленты page-viewer должен быть просто блочным контейнером */
             display: block;
             overflow: visible;
-            /* === ДОБАВЛЕНО ИСПРАВЛЕНИЕ #3 === */
+            /* === ДОБАВЛЕНО ИСПРАВЛЕНИЕ #3 (Из предыдущего ответа) === */
             /* Гарантирует, что контейнер страниц не будет сжиматься Flexbox-ом */
             height: auto !important;
             min-height: 100%;
@@ -378,6 +378,16 @@
             background: white;
             /* Белый фон страницы */
         }
+        
+        /* === ДОБАВЛЕНО ИСПРАВЛЕНИЕ #4 (Для отображения контента в открытой странице) === */
+        .feed-mode .page {
+            /* Запрещаем сжатие страницы, чтобы она корректно растягивалась в вертикальной ленте */
+            flex-shrink: 0;
+            width: 100%; /* Убедимся, что занимает всю ширину */
+            /* Восстанавливаем высоту для режима ленты */
+            height: auto; 
+        }
+        /* ============================================================================== */
 
         .page.active {
             /* Класс для активной (видимой) страницы */
@@ -2500,7 +2510,7 @@
                 //==============================================================//
                 {
                     published: true,
-                    collapsedOnLoad: true, // ВОЗВРАЩЕНО В ИСХОДНОЕ ЗНАЧЕНИЕ
+                    collapsedOnLoad: true, // ВОССТАНОВЛЕНО
                     collapsible: true,
                     customHeight: 'auto',
                     // ИСПОЛЬЗУЕМ ФУНКЦИЮ generateSmartCatalog ДЛЯ АВТОМАТИЧЕСКОГО СОЗДАНИЯ HTML
@@ -2629,7 +2639,7 @@
                                 name: "Индивидуальное обучение вышивке",
                                 items: [
                                     { id: 'ind-nastavnichestvo', title: "Наставничество", price: 15000, currency: "р", image: "https://via.placeholder.com/150", description: "Личное ведение." },
-                                    { id: 'ind-razbor', title: "Разбор", price: 5000, currency: "р", image: "https://via.placeholder.com/150", description: "Разбор профиля." },
+                                    { id: 'ind-разбор', title: "Разбор", price: 5000, currency: "р", image: "https://via.placeholder.com/150", description: "Разбор профиля." },
                                     { id: 'ind-konsultatsiya', title: "Консультация", price: 3000, currency: "р", image: "https://via.placeholder.com/150", description: "Ответы на вопросы." },
                                     { id: 'ind-urok-live', title: "Урок Live", price: 4000, currency: "р", image: "https://via.placeholder.com/150", description: "Живой урок." },
                                     { id: 'ind-audit', title: "Аудит", price: 3000, currency: "р", image: "https://via.placeholder.com/150", description: "Аудит бренда." }
