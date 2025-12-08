@@ -2090,7 +2090,7 @@
     <audio id="narrationAudio" preload="auto"></audio>
 
     <div id="stock-manager-modal" class="modal">
-        </div>
+    </div>
 
     <div id="admin-constructor-ui">
         <button id="stock-manager-btn" style="display: none;">📦 Управление Товарами</button>
@@ -2667,7 +2667,7 @@
                                 items: [
                                     {
                                         id: 'sumka-shkatulka-zhelaniy',
-                                        isInStock: true, // Метка для админа (Задача 2 и 3)
+                                        isInStock: false, // Метка для админа (Задача 2 и 3)
                                         title: "Мини сумочка «Шкатулка Желаний»",
                                         price: 5600,
                                         currency: "р",
@@ -2707,7 +2707,7 @@
                                 items: [
                                     {
                                         id: 'koltso-feyerverk',
-                                        isInStock: false,
+                                        isInStock: true,
                                         title: "Кольцо «Фейерверг»",
                                         price: 2600,
                                         currency: "р",
@@ -2733,7 +2733,7 @@
                                 items: [
                                     {
                                         id: 'kolye-geometriya-chuvstv',
-                                        isInStock: false,
+                                        isInStock: true,
                                         title: "Колье «Геометрия Чувств»",
                                         price: 12600,
                                         currency: "р",
@@ -3823,8 +3823,8 @@
                     this.modal = document.getElementById('stock-manager-modal');
                     this.listContainer = document.getElementById('stock-manager-list');
                     // ИСПРАВЛЕНИЕ: Получаем кнопку закрытия по новому ID внутри модального окна
-                    this.closeBtn = document.getElementById('stock-manager-modal')?.querySelector('.modal-close'); 
-                    
+                    this.closeBtn = document.getElementById('stock-manager-modal')?.querySelector('.modal-close');
+
 
                     this.setupUI();
                 }
@@ -3885,10 +3885,10 @@
                             }
 
                             // ВАЖНО: При первой загрузке берем статус из CONFIG. При работе админа берем из localStorage
-                            const isChecked = this.stockStatus[item.id] !== undefined 
-                                ? !!this.stockStatus[item.id] 
+                            const isChecked = this.stockStatus[item.id] !== undefined
+                                ? !!this.stockStatus[item.id]
                                 : item.isInStock;
-                                
+
                             // Обновляем localStorage при первой загрузке, чтобы синхронизировать с config
                             this.stockStatus[item.id] = isChecked;
 
@@ -3915,19 +3915,19 @@
                     // Сохраняем актуальный stockStatus в localStorage после рендеринга (включая синхронизацию с config)
                     localStorage.setItem('stockStatus', JSON.stringify(this.stockStatus));
                 }
-                
+
                 // --- НОВЫЙ МЕТОД: Отображение модального окна с инструкцией ---
                 showCopyInstructionsModal(htmlContent, codeToCopy) {
                     if (!document.body.contains(this.modal)) return;
-                    
+
                     // Создаем временный контейнер для инструкции, чтобы не трогать основной список
                     let instructionModal = document.getElementById('stock-instruction-modal');
                     if (!instructionModal) {
-                           instructionModal = document.createElement('div');
-                           instructionModal.id = 'stock-instruction-modal';
-                           instructionModal.className = 'modal';
-                           instructionModal.style.zIndex = '10003';
-                           instructionModal.innerHTML = `
+                        instructionModal = document.createElement('div');
+                        instructionModal.id = 'stock-instruction-modal';
+                        instructionModal.className = 'modal';
+                        instructionModal.style.zIndex = '10003';
+                        instructionModal.innerHTML = `
                                <div class="stock-manager-modal-content" style="max-width: 500px; padding: 25px;">
                                    <div id="instruction-content"></div>
                                    <div style="text-align: right; margin-top: 15px;">
@@ -3935,8 +3935,8 @@
                                    </div>
                                </div>
                            `;
-                           document.body.appendChild(instructionModal);
-                           // Кнопка закрытия не нужна, так как модальное окно закрывается вручную
+                        document.body.appendChild(instructionModal);
+                        // Кнопка закрытия не нужна, так как модальное окно закрывается вручную
                     }
 
                     instructionModal.querySelector('#instruction-content').innerHTML = htmlContent;
@@ -3945,19 +3945,19 @@
                     // Добавляем обработчик копирования
                     const copyBtn = instructionModal.querySelector('#copyStockCodeBtn');
                     if (copyBtn) {
-                         copyBtn.onclick = () => {
-                             if (codeToCopy) {
-                                 navigator.clipboard.writeText(codeToCopy).then(() => {
-                                     copyBtn.textContent = '✅ Код скопирован!';
-                                     setTimeout(() => {
-                                         copyBtn.textContent = '📋 Копировать код для CONFIG';
-                                     }, 2000);
-                                 }).catch(err => {
-                                     alert('Ошибка копирования! См. консоль F12.');
-                                     console.error('Ошибка копирования в буфер обмена:', err);
-                                 });
-                             }
-                         };
+                        copyBtn.onclick = () => {
+                            if (codeToCopy) {
+                                navigator.clipboard.writeText(codeToCopy).then(() => {
+                                    copyBtn.textContent = '✅ Код скопирован!';
+                                    setTimeout(() => {
+                                        copyBtn.textContent = '📋 Копировать код для CONFIG';
+                                    }, 2000);
+                                }).catch(err => {
+                                    alert('Ошибка копирования! См. консоль F12.');
+                                    console.error('Ошибка копирования в буфер обмена:', err);
+                                });
+                            }
+                        };
                     }
                 } // Конец showCopyInstructionsModal
                 // -------------------------------------------------------------
@@ -3989,28 +3989,28 @@
                                 }
                             });
                         });
-                        
+
                         // Генерируем новый, готовый к вставке код (с форматированием)
                         // Используем 8 пробелов для отступа для лучшей читаемости вложенного объекта
                         newCatalogCode = JSON.stringify(newConfigData, null, 8);
-                        
+
                         // Сохраняем код в LocalStorage для кнопки "Копировать код для CONFIG"
                         localStorage.setItem('GeneratedStockConfigData', newCatalogCode);
-                        
+
                         console.log(`Товар ID: ${itemId}, Статус наличия: ${isChecked ? 'В НАЛИЧИИ' : 'ПОД ЗАКАЗ'}`);
                         console.log('НОВЫЙ КОД КАТАЛОГА СГЕНЕРИРОВАН И СОХРАНЕН В БУФЕРЕ КОНФИГУРАЦИИ!');
                         // console.log(newCatalogCode); // Выводим в консоль для F12
                     }
                     // -------------------------------------------------------------
-                    
+
                     // Обновляем UI списка товаров, чтобы чекбокс сразу отразил состояние
                     this.renderList();
 
                     // 2. Показываем админу инструкцию
-                    const resultText = isChecked 
+                    const resultText = isChecked
                         ? `Товар "**${itemId}**" теперь помечен как **В НАЛИЧИИ**.`
                         : `Товар "**${itemId}**" теперь помечен как **ПОД ЗАКАЗ** (скрыт на Странице 2).`;
-                    
+
                     const instructionsHtml = `
                         <p>${resultText}</p>
                         <p style="font-weight: bold; color: #dc3545;">🚨 ВАЖНО: Изменение применилось только в вашем браузере!</p>
@@ -4030,10 +4030,10 @@
                             <li>Нажмите **Сохранить и Перезагрузить** для теста.</li>
                         </ol>
                     `;
-                    
+
                     // Открываем модальное окно с инструкцией (для админа)
                     this.showCopyInstructionsModal(instructionsHtml, newCatalogCode);
-                    
+
                 } // Конец toggleStock
             }
             // Делаем экземпляр доступным глобально, чтобы он мог обрабатывать события onchange
@@ -4547,6 +4547,5 @@
         });
     </script>
 </body>
-
 
 </html>
